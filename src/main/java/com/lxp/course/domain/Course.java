@@ -19,7 +19,7 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -57,8 +57,8 @@ public class Course {
     private List<Chapter> chapters;
 
     @Column(updatable = false, nullable = false)
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
+    private Instant createTime;
+    private Instant updateTime;
 
     private Course(
         CourseBody courseBody, Long categoryId,
@@ -75,8 +75,8 @@ public class Course {
         this.coverImageUrl = coverImageUrl;
         this.difficulty = requireNonNull(difficulty, DIFFICULTY);
         this.chapters = chapters;
-        this.createTime = LocalDateTime.now();
-        this.updateTime = LocalDateTime.now();
+        this.createTime = Instant.now();
+        this.updateTime = Instant.now();
 
         validateDuplicateChapterSeq(chapters);
     }

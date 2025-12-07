@@ -11,7 +11,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import static com.lxp.course.domain.common.CommonStaticFieldName.ALLOWED_TITLE_LENGTH;
 import static com.lxp.course.domain.common.CommonStaticFieldName.LESSON;
@@ -35,8 +35,8 @@ public class Lesson {
     @Column(nullable = false)
     private String resourceUrl;
     @Column(updatable = false,  nullable = false)
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
+    private Instant createTime;
+    private Instant updateTime;
 
     private Lesson(String title, Integer seq, String resourceUrl) {
         validateTitle(title);
@@ -44,8 +44,8 @@ public class Lesson {
         this.title = title;
         this.seq = requireNonNull(seq, SEQ);
         this.resourceUrl = resourceUrl;
-        this.createTime = LocalDateTime.now();
-        this.updateTime = LocalDateTime.now();
+        this.createTime = Instant.now();
+        this.updateTime = Instant.now();
     }
 
     static Lesson create(LessonCreateSpec spec) {

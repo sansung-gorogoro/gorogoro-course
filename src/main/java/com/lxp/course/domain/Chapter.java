@@ -13,7 +13,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -42,8 +42,8 @@ public class Chapter {
     @OneToMany(mappedBy = CHAPTER, cascade = CascadeType.PERSIST)
     private List<Lesson> lessons;
     @Column(updatable = false,  nullable = false)
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
+    private Instant createTime;
+    private Instant updateTime;
 
     private Chapter(String title, Integer seq, List<Lesson> lessons) {
         validateTitle(title);
@@ -52,8 +52,8 @@ public class Chapter {
         this.title = title;
         this.seq = requireNonNull(seq, SEQ);
         this.lessons = lessons;
-        this.createTime = LocalDateTime.now();
-        this.updateTime = LocalDateTime.now();
+        this.createTime = Instant.now();
+        this.updateTime = Instant.now();
     }
 
     static Chapter create(ChapterCreateSpec spec) {
