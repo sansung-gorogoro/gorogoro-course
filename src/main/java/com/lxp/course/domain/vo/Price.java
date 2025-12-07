@@ -4,18 +4,16 @@ import com.lxp.course.exception.BusinessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
-import java.math.BigDecimal;
-
 import static com.lxp.course.domain.common.CommonStaticFieldName.ALLOWED_PRICE;
 import static com.lxp.course.domain.exception.CourseErrorCode.PRICE_MUST_MORE_THAN_ZERO;
 
 @Embeddable
 public record Price(
     @Column(nullable = false)
-    BigDecimal price
+    Integer price
 ) {
     public Price {
-        if (price == null || price.compareTo(BigDecimal.ZERO) <= ALLOWED_PRICE)
+        if (price == null || price < ALLOWED_PRICE)
             throw BusinessException.builder(PRICE_MUST_MORE_THAN_ZERO).build();
     }
 
