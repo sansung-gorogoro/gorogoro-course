@@ -1,6 +1,5 @@
 package com.lxp.course.domain;
 
-import com.lxp.course.domain.mapper.LessonCreateSpec;
 import com.lxp.course.exception.BusinessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,6 +19,7 @@ import static com.lxp.course.domain.common.CommonStaticFieldName.TITLE;
 import static com.lxp.course.domain.common.CommonValidator.requireNonNull;
 import static com.lxp.course.domain.common.CommonValidator.requireNotBlank;
 import static com.lxp.course.domain.exception.CourseErrorCode.LESSON_TITLE_TOO_LONG;
+import static com.lxp.course.domain.spec.CreateCourseSpec.*;
 
 @Entity
 @Getter
@@ -48,7 +48,7 @@ public class Lesson {
         this.updateTime = Instant.now();
     }
 
-    static Lesson create(LessonCreateSpec spec) {
+    static Lesson create(CreateLessonSpec spec) {
         return new Lesson(spec.title(), spec.seq(), spec.resourceUrl());
     }
 

@@ -1,7 +1,7 @@
 package com.lxp.course.domain;
 
 import com.lxp.course.domain.enums.CourseDifficulty;
-import com.lxp.course.domain.mapper.CourseCreateSpec;
+import com.lxp.course.domain.spec.CreateCourseSpec;
 import com.lxp.course.domain.vo.CourseAccessPolicy;
 import com.lxp.course.domain.vo.CourseBody;
 import com.lxp.course.domain.vo.Price;
@@ -82,7 +82,7 @@ public class Course {
     }
 
     public static Course create(
-        CourseCreateSpec mapper
+        CreateCourseSpec mapper
     ) {
         List<Chapter> chapters = Optional.ofNullable(mapper.chapterMappers())
             .orElse(List.of())

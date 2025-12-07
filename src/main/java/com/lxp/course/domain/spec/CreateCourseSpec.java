@@ -1,4 +1,4 @@
-package com.lxp.course.domain.mapper;
+package com.lxp.course.domain.spec;
 
 import com.lxp.course.domain.enums.CourseDifficulty;
 import com.lxp.course.domain.vo.CourseAccessPolicy;
@@ -7,13 +7,24 @@ import com.lxp.course.domain.vo.Price;
 
 import java.util.List;
 
-public record CourseCreateSpec(
+public record CreateCourseSpec(
     CourseBody courseBody,
     Long categoryId,
     Price price,
     CourseAccessPolicy accessPolicy,
     String coverImageUrl,
     CourseDifficulty difficulty,
-    List<ChapterCreateSpec> chapterMappers
+    List<CreateChapterSpec> chapterMappers
 ) {
+    public record CreateChapterSpec(
+        String title,
+        Integer seq,
+        List<CreateLessonSpec> lessonSpecs
+    ) {}
+
+    public record CreateLessonSpec(
+        String title,
+        Integer seq,
+        String resourceUrl
+    ) {}
 }

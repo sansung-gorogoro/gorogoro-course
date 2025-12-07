@@ -1,6 +1,6 @@
 package com.lxp.course.domain;
 
-import com.lxp.course.domain.mapper.ChapterCreateSpec;
+import com.lxp.course.domain.spec.CreateCourseSpec.CreateChapterSpec;
 import com.lxp.course.exception.BusinessException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -56,9 +56,9 @@ public class Chapter {
         this.updateTime = Instant.now();
     }
 
-    static Chapter create(ChapterCreateSpec spec) {
+    static Chapter create(CreateChapterSpec spec) {
         List<Lesson> lessons =
-            Optional.ofNullable(spec.lessonMappers())
+            Optional.ofNullable(spec.lessonSpecs())
                 .orElse(List.of())
                 .stream().map(Lesson::create).toList();
 
