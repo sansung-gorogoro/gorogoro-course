@@ -6,6 +6,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Lob;
 
+import java.util.Objects;
+
 import static com.lxp.course.domain.common.CommonStaticFieldName.COURSE;
 import static com.lxp.course.domain.common.CommonStaticFieldName.DESCRIPTION;
 import static com.lxp.course.domain.common.CommonStaticFieldName.ALLOWED_DESCRIPTION_LENGTH;
@@ -43,5 +45,28 @@ public record CourseBody(
 
     public CourseBody getBody() {
         return new CourseBody(title, summary, description);
+    }
+
+    public CourseBody update(String title, String summary, String description) {
+        CourseBody newCourseBody = new CourseBody(
+            title == null ? this.title : title,
+            summary == null ? this.summary : summary,
+            description == null ? this.description : description
+        );
+        return this.equals(newCourseBody) ? this : newCourseBody;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        CourseBody that = (CourseBody) o;
+        return Objects.equals(title, that.title)
+            && Objects.equals(summary, that.summary)
+            && Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, summary, description);
     }
 }
