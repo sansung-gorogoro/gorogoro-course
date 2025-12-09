@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import static com.lxp.course.domain.common.CommonStaticFieldName.COURSE;
 import static com.lxp.course.domain.common.CommonStaticFieldName.COURSE_ACCESS_POLICY;
 import static com.lxp.course.domain.common.CommonStaticFieldName.COURSE_BODY;
 import static com.lxp.course.domain.common.CommonStaticFieldName.DIFFICULTY;
+import static com.lxp.course.domain.common.CommonStaticFieldName.INSTRUCTOR_ID;
 import static com.lxp.course.domain.common.CommonStaticFieldName.PRICE;
 import static com.lxp.course.domain.common.CommonValidator.requireNonNull;
 import static com.lxp.course.domain.exception.CourseErrorCode.DUPLICATED_SEQ;
@@ -63,7 +65,7 @@ public class Course {
     private Instant updateTime;
 
     private Course(
-        CourseBody courseBody, Long categoryId,
+        CourseBody courseBody, Long categoryId, Long instructorId,
         Price price, CourseAccessPolicy accessPolicy,
         String coverImageUrl, CourseDifficulty difficulty,
         List<Chapter> chapters
@@ -87,16 +89,20 @@ public class Course {
     public static Course create(
         CreateCourseSpec mapper
     ) {
+        Course course = new Course(
+            mapper.courseBody(), mapper.categoryId(),
+            mapper.instructorId(), mapper.price(),
+            mapper.accessPolicy(), mapper.coverImageUrl(),
+            mapper.difficulty(), new ArrayList<>()
+        );
+
         List<Chapter> chapters = Optional.ofNullable(mapper.chapterMappers())
             .orElse(List.of())
-            .stream().map(Chapter::create).toList();
+            .stream().map(spec -> Chapter.create(spec, course)).toList();
 
-        return new Course(
-            mapper.courseBody(), mapper.categoryId(),
-            mapper.price(), mapper.accessPolicy(),
-            mapper.coverImageUrl(),
-            mapper.difficulty(), chapters
-        );
+        course.addAllChapter(chapters);
+
+        return course;
     }
 
     private void validateDuplicateChapterSeq(List<Chapter> chapters) {
@@ -113,5 +119,9 @@ public class Course {
                     .build();
             }
         });
+    }
+
+    private void addAllChapter(List<Chapter> chapters) {
+        this.chapters.addAll(chapters);
     }
 }

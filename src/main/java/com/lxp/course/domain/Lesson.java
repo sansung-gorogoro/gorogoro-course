@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,13 +15,14 @@ import lombok.NoArgsConstructor;
 import java.time.Instant;
 
 import static com.lxp.course.domain.common.CommonStaticFieldName.ALLOWED_TITLE_LENGTH;
+import static com.lxp.course.domain.common.CommonStaticFieldName.CHAPTER;
 import static com.lxp.course.domain.common.CommonStaticFieldName.LESSON;
 import static com.lxp.course.domain.common.CommonStaticFieldName.SEQ;
 import static com.lxp.course.domain.common.CommonStaticFieldName.TITLE;
 import static com.lxp.course.domain.common.CommonValidator.requireNonNull;
 import static com.lxp.course.domain.common.CommonValidator.requireNotBlank;
 import static com.lxp.course.domain.exception.CourseErrorCode.LESSON_TITLE_TOO_LONG;
-import static com.lxp.course.domain.spec.CreateCourseSpec.*;
+import static com.lxp.course.domain.spec.CreateCourseSpec.CreateLessonSpec;
 
 @Entity
 @Getter
@@ -34,22 +37,26 @@ public class Lesson {
     private Integer seq;
     @Column(nullable = false)
     private String resourceUrl;
+    @ManyToOne
+    @JoinColumn(name = "chapter_id", nullable = false)
+    private Chapter chapter;
     @Column(updatable = false,  nullable = false)
     private Instant createTime;
     private Instant updateTime;
 
-    private Lesson(String title, Integer seq, String resourceUrl) {
+    private Lesson(String title, Integer seq, String resourceUrl, Chapter chapter) {
         validateTitle(title);
 
         this.title = title;
         this.seq = requireNonNull(seq, SEQ);
         this.resourceUrl = resourceUrl;
+        this.chapter = requireNonNull(chapter, CHAPTER);
         this.createTime = Instant.now();
         this.updateTime = Instant.now();
     }
 
-    static Lesson create(CreateLessonSpec spec) {
-        return new Lesson(spec.title(), spec.seq(), spec.resourceUrl());
+    static Lesson create(CreateLessonSpec spec, Chapter chapter) {
+        return new Lesson(spec.title(), spec.seq(), spec.resourceUrl(), chapter);
     }
 
     private void validateTitle(String title) {
