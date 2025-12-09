@@ -3,6 +3,7 @@ package com.lxp.course.domain;
 import com.lxp.course.exception.BusinessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,7 +38,7 @@ public class Lesson {
     private Integer seq;
     @Column(nullable = false)
     private String resourceUrl;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chapter_id", nullable = false)
     private Chapter chapter;
     @Column(updatable = false,  nullable = false)

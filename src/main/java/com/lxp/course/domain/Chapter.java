@@ -5,6 +5,7 @@ import com.lxp.course.exception.BusinessException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -46,7 +47,7 @@ public class Chapter {
     private Integer seq;
     @OneToMany(mappedBy = CHAPTER, cascade = CascadeType.PERSIST)
     private List<Lesson> lessons;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
     @Column(updatable = false,  nullable = false)
