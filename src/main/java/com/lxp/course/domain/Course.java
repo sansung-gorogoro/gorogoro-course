@@ -76,7 +76,6 @@ public class Course {
         List<Chapter> chapters
     ) {
         //TODO(Chapter와 Lesson은 몇개까지 넣을 수 있게 할 것인지, inflearn기준 최소단위는 나와 있지만 최대 단위는 없음)
-
         this.courseBody = requireNonNull(courseBody, COURSE_BODY);
         this.categoryId = requireNonNull(categoryId, CATEGORY);
         this.instructorId = requireNonNull(instructorId, INSTRUCTOR_ID);
@@ -87,8 +86,6 @@ public class Course {
         this.chapters = chapters;
         this.createTime = Instant.now();
         this.updateTime = Instant.now();
-
-        validateDuplicateChapterSeq(chapters);
     }
 
     public static Course create(
@@ -157,6 +154,8 @@ public class Course {
     }
 
     private void addAllChapter(List<Chapter> chapters) {
+        validateDuplicateChapterSeq(chapters);
+
         this.chapters.addAll(chapters);
     }
 

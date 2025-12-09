@@ -61,7 +61,6 @@ public class Chapter {
 
     private Chapter(String title, Integer seq, List<Lesson> lessons, Course course) {
         validateTitle(title);
-        validateDuplicateLessonSeq(lessons);
 
         this.title = title;
         this.seq = requireNonNull(seq, SEQ);
@@ -132,6 +131,8 @@ public class Chapter {
     }
 
     private void addAllLesson(List<Lesson> lessons) {
+        validateDuplicateLessonSeq(lessons);
+
         this.lessons.addAll(lessons);
     }
 
