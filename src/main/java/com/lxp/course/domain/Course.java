@@ -160,6 +160,10 @@ public class Course {
         this.chapters.addAll(chapters);
     }
 
+    public List<Chapter> getChapters() {
+        return List.copyOf(chapters);
+    }
+
     private void updated() {
         this.updateTime = Instant.now();
     }
