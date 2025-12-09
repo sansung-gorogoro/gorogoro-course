@@ -5,6 +5,9 @@ import com.lxp.course.exception.BusinessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Lob;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
@@ -19,16 +22,21 @@ import static com.lxp.course.domain.common.CommonValidator.requireNotBlank;
 import static com.lxp.course.domain.exception.CourseErrorCode.COURSE_TITLE_TOO_LONG;
 
 @Embeddable
-public record CourseBody(
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class CourseBody {
+
     @Column(nullable = false, length = ALLOWED_TITLE_LENGTH)
-    String title,
+    private String title;
+
     @Column(nullable = false, length = ALLOWED_SUMMARY_LENGTH)
-    String summary,
-    @Column(nullable = false)
+    private String summary;
+
     @Lob
-    String description
-) {
-    public CourseBody {
+    @Column(nullable = false)
+    private String description;
+
+    public CourseBody(String title, String summary, String description) {
         requireNotBlank(title, COURSE, TITLE);
         requireNotBlank(summary, SUMMARY, TITLE);
         requireNotBlank(description, DESCRIPTION, TITLE);
@@ -41,10 +49,10 @@ public record CourseBody(
 
         if (description.length() > ALLOWED_DESCRIPTION_LENGTH)
             throw BusinessException.builder(CourseErrorCode.COURSE_DESCRIPTION_TOO_LONG).build();
-    }
 
-    public CourseBody getBody() {
-        return new CourseBody(title, summary, description);
+        this.title = title;
+        this.summary = summary;
+        this.description = description;
     }
 
     public CourseBody update(String title, String summary, String description) {
@@ -58,6 +66,7 @@ public record CourseBody(
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CourseBody that = (CourseBody) o;
         return Objects.equals(title, that.title)

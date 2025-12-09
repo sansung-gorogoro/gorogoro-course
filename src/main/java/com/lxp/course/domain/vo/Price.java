@@ -10,30 +10,29 @@ import static com.lxp.course.domain.common.CommonStaticFieldName.ALLOWED_PRICE;
 import static com.lxp.course.domain.exception.CourseErrorCode.PRICE_MUST_MORE_THAN_ZERO;
 
 @Embeddable
-public record Price(
+public class Price {
+
     @Column(nullable = false)
-    Integer price
-) {
-    public Price {
+    private Integer price;
+
+    protected Price() { }
+
+    public Price(Integer price) {
         if (price == null || price < ALLOWED_PRICE)
             throw BusinessException.builder(PRICE_MUST_MORE_THAN_ZERO).build();
+        this.price = price;
     }
 
     public Price update(Integer price) {
         Integer newValue = (price == null) ? this.price : price;
-        if (newValue.equals(this.price)) {
-            return this;
-        }
-
-        return new Price(newValue);
+        return newValue.equals(this.price) ? this : new Price(newValue);
     }
 
-    public Price getPrice() {
-        return new Price(price);
-    }
+    public Integer getValue() { return price; }
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Price that = (Price) o;
         return Objects.equals(price, that.price);
@@ -41,6 +40,6 @@ public record Price(
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(price);
+        return Objects.hash(price);
     }
 }
