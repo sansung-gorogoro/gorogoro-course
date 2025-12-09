@@ -15,7 +15,7 @@ public record CreateCourseSpec(
     CourseAccessPolicy accessPolicy,
     String coverImageUrl,
     CourseDifficulty difficulty,
-    List<CreateChapterSpec> chapterMappers
+    List<CreateChapterSpec> chapterSpecs
 ) {
     public record CreateChapterSpec(
         String title,
