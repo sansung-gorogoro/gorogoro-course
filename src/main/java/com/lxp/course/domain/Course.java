@@ -123,6 +123,7 @@ public class Course {
         this.difficulty = spec.courseDifficulty() == null ? this.difficulty : spec.courseDifficulty();
 
         updateChapter(spec.chapterCommands());
+        validateDuplicateChapterSeq(chapters);
 
         updated();
     }

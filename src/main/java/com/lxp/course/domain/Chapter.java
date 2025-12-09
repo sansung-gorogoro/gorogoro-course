@@ -103,6 +103,8 @@ public class Chapter {
                 .ifPresent(lesson::update)
         );
 
+        validateDuplicateLessonSeq(this.lessons);
+
         updated();
     }
 
