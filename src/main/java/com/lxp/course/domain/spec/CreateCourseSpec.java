@@ -10,6 +10,7 @@ import java.util.List;
 public record CreateCourseSpec(
     CourseBody courseBody,
     Long categoryId,
+    Long instructorId,
     Price price,
     CourseAccessPolicy accessPolicy,
     String coverImageUrl,

@@ -41,13 +41,13 @@ public record CreateCourseRequest(
         }
     }
 
-    public CreateCourseCommand toCommand() {
+    public CreateCourseCommand toCommand(Long instructorId) {
         List<CreateChapterCommand> chapterCommands =
             contents.stream().map(CreateChapterRequest::toCommand).toList();
 
         return new CreateCourseCommand(
             title, summary, description,
-            categoryId, price, availableDays,
+            categoryId, instructorId, price, availableDays,
             coverImageUrl, courseDifficulty, chapterCommands
         );
     }

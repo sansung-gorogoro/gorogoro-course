@@ -49,6 +49,8 @@ public class Course {
     private CourseAccessPolicy accessPolicy;
     @Column(nullable = false)
     private Long categoryId;
+    @Column(nullable = false)
+    private Long instructorId;
     private String coverImageUrl;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -70,6 +72,7 @@ public class Course {
 
         this.courseBody = requireNonNull(courseBody, COURSE_BODY);
         this.categoryId = requireNonNull(categoryId, CATEGORY);
+        this.instructorId = requireNonNull(instructorId, INSTRUCTOR_ID);
         this.price = requireNonNull(price, PRICE);
         this.accessPolicy = requireNonNull(accessPolicy, COURSE_ACCESS_POLICY);
         this.coverImageUrl = coverImageUrl;

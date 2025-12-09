@@ -16,6 +16,6 @@ public class CourseController implements CourseApi {
 
     @PostMapping
     public void createCourse(@RequestBody CreateCourseRequest request) {
-        createCourseUseCase.execute(request.toCommand());
+        createCourseUseCase.execute(request.toCommand(1L));
     }
 }

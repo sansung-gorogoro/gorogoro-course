@@ -15,6 +15,7 @@ public record CreateCourseCommand(
     String summary,
     String description,
     Long categoryId,
+    Long instructorId,
     Integer price,
     Integer accessDay,
     String coverImageUrl,
@@ -53,8 +54,8 @@ public record CreateCourseCommand(
         CourseAccessPolicy accessPolicy = new CourseAccessPolicy(accessDay);
 
         return new CreateCourseSpec(
-            courseBody, categoryId, price,
-            accessPolicy, coverImageUrl,
+            courseBody, categoryId, instructorId,
+            price, accessPolicy, coverImageUrl,
             courseDifficulty, chapterSpecs
         );
     }
