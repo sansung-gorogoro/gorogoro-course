@@ -21,7 +21,7 @@ public class CourseRepositoryAdapter implements CourseRepository {
 
     @Override
     public Optional<Course> findById(Long id) {
-        return courseJpaRepository.findById(id);
+        return courseJpaRepository.findByIdWith(id);
     }
 
     @Override
