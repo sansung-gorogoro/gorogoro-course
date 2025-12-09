@@ -1,5 +1,6 @@
 package com.lxp.course.domain;
 
+import com.lxp.course.domain.spec.UpdateCourseSpec.UpdateLessonSpec;
 import com.lxp.course.exception.BusinessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -60,10 +61,22 @@ public class Lesson {
         return new Lesson(spec.title(), spec.seq(), spec.resourceUrl(), chapter);
     }
 
+    void update(UpdateLessonSpec spec) {
+        this.title = spec.title() == null ? this.title : spec.title();
+        this.seq = spec.seq() == null ? this.seq : spec.seq();
+        this.resourceUrl = spec.resourceUrl() == null ? this.resourceUrl : spec.resourceUrl();
+
+        updated();
+    }
+
     private void validateTitle(String title) {
         requireNotBlank(title, LESSON, TITLE);
 
         if (title.length() > ALLOWED_TITLE_LENGTH)
             throw BusinessException.builder(LESSON_TITLE_TOO_LONG).build();
+    }
+
+    private void updated() {
+        this.updateTime = Instant.now();
     }
 }
