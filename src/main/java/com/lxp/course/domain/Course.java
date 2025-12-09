@@ -1,7 +1,7 @@
 package com.lxp.course.domain;
 
 import com.lxp.course.domain.enums.CourseDifficulty;
-import com.lxp.course.domain.mapper.CourseCreateSpec;
+import com.lxp.course.domain.spec.CreateCourseSpec;
 import com.lxp.course.domain.vo.CourseAccessPolicy;
 import com.lxp.course.domain.vo.CourseBody;
 import com.lxp.course.domain.vo.Price;
@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import static com.lxp.course.domain.common.CommonStaticFieldName.COURSE;
 import static com.lxp.course.domain.common.CommonStaticFieldName.COURSE_ACCESS_POLICY;
 import static com.lxp.course.domain.common.CommonStaticFieldName.COURSE_BODY;
 import static com.lxp.course.domain.common.CommonStaticFieldName.DIFFICULTY;
+import static com.lxp.course.domain.common.CommonStaticFieldName.INSTRUCTOR_ID;
 import static com.lxp.course.domain.common.CommonStaticFieldName.PRICE;
 import static com.lxp.course.domain.common.CommonValidator.requireNonNull;
 import static com.lxp.course.domain.exception.CourseErrorCode.DUPLICATED_SEQ;
@@ -49,6 +51,8 @@ public class Course {
     private CourseAccessPolicy accessPolicy;
     @Column(nullable = false)
     private Long categoryId;
+    @Column(nullable = false)
+    private Long instructorId;
     private String coverImageUrl;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -61,7 +65,7 @@ public class Course {
     private Instant updateTime;
 
     private Course(
-        CourseBody courseBody, Long categoryId,
+        CourseBody courseBody, Long categoryId, Long instructorId,
         Price price, CourseAccessPolicy accessPolicy,
         String coverImageUrl, CourseDifficulty difficulty,
         List<Chapter> chapters
@@ -70,6 +74,7 @@ public class Course {
 
         this.courseBody = requireNonNull(courseBody, COURSE_BODY);
         this.categoryId = requireNonNull(categoryId, CATEGORY);
+        this.instructorId = requireNonNull(instructorId, INSTRUCTOR_ID);
         this.price = requireNonNull(price, PRICE);
         this.accessPolicy = requireNonNull(accessPolicy, COURSE_ACCESS_POLICY);
         this.coverImageUrl = coverImageUrl;
@@ -82,18 +87,22 @@ public class Course {
     }
 
     public static Course create(
-        CourseCreateSpec mapper
+        CreateCourseSpec mapper
     ) {
+        Course course = new Course(
+            mapper.courseBody(), mapper.categoryId(),
+            mapper.instructorId(), mapper.price(),
+            mapper.accessPolicy(), mapper.coverImageUrl(),
+            mapper.difficulty(), new ArrayList<>()
+        );
+
         List<Chapter> chapters = Optional.ofNullable(mapper.chapterMappers())
             .orElse(List.of())
-            .stream().map(Chapter::create).toList();
+            .stream().map(spec -> Chapter.create(spec, course)).toList();
 
-        return new Course(
-            mapper.courseBody(), mapper.categoryId(),
-            mapper.price(), mapper.accessPolicy(),
-            mapper.coverImageUrl(),
-            mapper.difficulty(), chapters
-        );
+        course.addAllChapter(chapters);
+
+        return course;
     }
 
     private void validateDuplicateChapterSeq(List<Chapter> chapters) {
@@ -110,5 +119,9 @@ public class Course {
                     .build();
             }
         });
+    }
+
+    private void addAllChapter(List<Chapter> chapters) {
+        this.chapters.addAll(chapters);
     }
 }
