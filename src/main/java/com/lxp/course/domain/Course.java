@@ -2,6 +2,8 @@ package com.lxp.course.domain;
 
 import com.lxp.course.domain.enums.CourseDifficulty;
 import com.lxp.course.domain.spec.CreateCourseSpec;
+import com.lxp.course.domain.spec.UpdateCourseSpec;
+import com.lxp.course.domain.spec.UpdateCourseSpec.UpdateChapterSpec;
 import com.lxp.course.domain.vo.CourseAccessPolicy;
 import com.lxp.course.domain.vo.CourseBody;
 import com.lxp.course.domain.vo.Price;
@@ -23,8 +25,11 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.lxp.course.domain.common.CommonStaticFieldName.CATEGORY;
 import static com.lxp.course.domain.common.CommonStaticFieldName.CHAPTER;
@@ -96,13 +101,42 @@ public class Course {
             mapper.difficulty(), new ArrayList<>()
         );
 
-        List<Chapter> chapters = Optional.ofNullable(mapper.chapterMappers())
+        List<Chapter> chapters = Optional.ofNullable(mapper.chapterSpecs())
             .orElse(List.of())
             .stream().map(spec -> Chapter.create(spec, course)).toList();
 
         course.addAllChapter(chapters);
 
         return course;
+    }
+
+    public void update(UpdateCourseSpec spec) {
+        CourseBody updatedCourseBody = courseBody.update(spec.title(), spec.summary(), spec.description());
+        Price updatedPrice = price.update(spec.price());
+        CourseAccessPolicy updatedAccessPolicy = accessPolicy.update(spec.accessDay());
+
+        this.courseBody = updatedCourseBody;
+        this.categoryId = spec.categoryId() == null ? this.categoryId : spec.categoryId();
+        this.price = updatedPrice;
+        this.accessPolicy = updatedAccessPolicy;
+        this.coverImageUrl = spec.coverImageUrl() == null ? this.coverImageUrl : spec.coverImageUrl();
+        this.difficulty = spec.courseDifficulty() == null ? this.difficulty : spec.courseDifficulty();
+
+        updateChapter(spec.chapterCommands());
+
+        updated();
+    }
+
+    private void updateChapter(List<UpdateChapterSpec> changes) {
+        Map<Long, UpdateChapterSpec> idChangeMap = changes.stream().collect(Collectors.toMap(
+            UpdateChapterSpec::chapterId,
+            Function.identity()
+        ));
+
+        this.chapters.forEach(chapter ->
+            Optional.ofNullable(idChangeMap.get(chapter.getId()))
+                .ifPresent(chapter::update)
+        );
     }
 
     private void validateDuplicateChapterSeq(List<Chapter> chapters) {
@@ -123,5 +157,9 @@ public class Course {
 
     private void addAllChapter(List<Chapter> chapters) {
         this.chapters.addAll(chapters);
+    }
+
+    private void updated() {
+        this.updateTime = Instant.now();
     }
 }
