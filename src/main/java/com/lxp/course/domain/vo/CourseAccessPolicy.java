@@ -18,6 +18,15 @@ public record CourseAccessPolicy(
             throw BusinessException.builder(ACCESS_DAY_MUST_MORE_THAN_ONE_DAY).build();
     }
 
+    public CourseAccessPolicy update(Integer accessDays) {
+        Integer newValue = (accessDays == null) ? this.accessDays : accessDays;
+        if (newValue.equals(this.accessDays)) {
+            return this;
+        }
+
+        return new CourseAccessPolicy(newValue);
+    }
+
     public LocalDateTime calculateExpireAt(LocalDateTime purchaseTime) {
         return purchaseTime.plusDays(accessDays);
     }
