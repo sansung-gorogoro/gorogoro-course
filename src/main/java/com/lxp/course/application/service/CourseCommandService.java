@@ -15,7 +15,7 @@ public class CourseCommandService implements CreateCourseUseCase {
     private final CourseRepository courseRepository;
 
     @Override
-    public void execute(CreateCourseCommand command) {
+    public void createExecute(CreateCourseCommand command) {
         courseRepository.save(Course.create(command.toSpec()));
     }
 }
