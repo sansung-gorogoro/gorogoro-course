@@ -2,27 +2,30 @@ package com.lxp.course.infra;
 
 import com.lxp.course.domain.Course;
 import com.lxp.course.domain.repository.CourseRepository;
+import com.lxp.course.infra.jpa.CourseJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 @RequiredArgsConstructor
 public class CourseRepositoryAdapter implements CourseRepository {
-    private final CourseRepository courseRepository;
+    private final CourseJpaRepository courseJpaRepository;
 
     @Override
     public Course save(Course course) {
-        return courseRepository.save(course);
+        return courseJpaRepository.save(course);
     }
 
     @Override
     public Optional<Course> findById(Long id) {
-        return courseRepository.findById(id);
+        return courseJpaRepository.findById(id);
     }
 
     @Override
     public List<Course> findAll() {
-        return courseRepository.findAll();
+        return courseJpaRepository.findAll();
     }
 }
