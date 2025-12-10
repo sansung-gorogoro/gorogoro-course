@@ -50,18 +50,26 @@ import static com.lxp.course.domain.exception.CourseErrorCode.DUPLICATED_SEQ;
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
     @Embedded
+    @Getter
     private CourseBody courseBody;
     @Embedded
+    @Getter
     private Price price;
     @Embedded
     private CourseAccessPolicy accessPolicy;
     @Column(nullable = false)
     private Long categoryId;
+    //TODO(강사 이름 필요)
+    @Getter
+    @Column(nullable = false)
+    private String instructorName;
     @Getter
     @Column(nullable = false)
     private Long instructorId;
+    @Getter
     private String coverImageUrl;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
