@@ -19,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
@@ -56,6 +57,7 @@ public class Course {
     private CourseAccessPolicy accessPolicy;
     @Column(nullable = false)
     private Long categoryId;
+    @Getter
     @Column(nullable = false)
     private Long instructorId;
     private String coverImageUrl;
