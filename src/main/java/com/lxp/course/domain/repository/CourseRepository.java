@@ -7,7 +7,8 @@ import java.util.Optional;
 
 public interface CourseRepository {
     Course save(Course course);
-    Optional<Course> findById(Long id);
+    Optional<Course> findByIdWith(Long id);
     List<Course> findAll();
     void deleteById(Long id);
+    Optional<Course> findById(Long id);
 }
