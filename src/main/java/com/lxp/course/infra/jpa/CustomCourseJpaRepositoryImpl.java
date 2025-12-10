@@ -20,6 +20,7 @@ public class CustomCourseJpaRepositoryImpl implements CustomCourseJpaRepository 
     public Optional<Course> findByIdWith(Long courseId) {
         Optional<Course> entity = Optional.ofNullable(
             jpaQueryFactory.selectFrom(course)
+                .distinct()
                 .leftJoin(course.chapters, chapter).fetchJoin()
                 .where(course.id.eq(courseId))
                 .fetchOne()
