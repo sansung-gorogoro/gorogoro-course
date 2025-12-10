@@ -23,6 +23,7 @@ public class CategoryQueryService implements GetCategoriesUseCase {
         List<Category> categories = categoryRepository.findAll();
 
         Map<Category, List<Category>> byParent = categories.stream()
+            .filter(category -> category.getParent() != null)
             .collect(Collectors.groupingBy(Category::getParent));
 
         return CategoryDto.toDtos(byParent);
