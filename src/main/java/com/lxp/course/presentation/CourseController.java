@@ -48,8 +48,11 @@ public class CourseController implements CourseApi {
     }
 
     @DeleteMapping("/{courseId}")
-    public ResponseEntity<Void> deleteCourse(@PathVariable Long courseId) {
-        deleteCourseUseCase.deleteCourseExecute(courseId);
+    public ResponseEntity<Void> deleteCourse(
+        @PathVariable Long courseId,
+        Long userId
+    ) {
+        deleteCourseUseCase.deleteCourseExecute(courseId, 1L);
 
         return ResponseEntity.status(NO_CONTENT).build();
     }
@@ -60,7 +63,7 @@ public class CourseController implements CourseApi {
         @RequestBody DeleteChaptersRequest request
     ) {
         deleteChapterUseCase.deleteChapterExecute(
-            new DeleteChaptersCommand(courseId, request.chapterIds())
+            new DeleteChaptersCommand(courseId, 1L, request.chapterIds())
         );
 
         return ResponseEntity.status(NO_CONTENT).build();
@@ -73,7 +76,7 @@ public class CourseController implements CourseApi {
         @RequestBody DeleteLessonsRequest request
     ) {
         deleteLessonUseCase.deleteLessonExecute(
-            new DeleteLessonsCommand(courseId, chapterId, request.lessonIds())
+            new DeleteLessonsCommand(courseId, chapterId, 1L, request.lessonIds())
         );
 
         return ResponseEntity.status(NO_CONTENT).build();
