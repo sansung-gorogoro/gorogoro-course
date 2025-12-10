@@ -28,4 +28,9 @@ public class CourseRepositoryAdapter implements CourseRepository {
     public List<Course> findAll() {
         return courseJpaRepository.findAll();
     }
+
+    @Override
+    public void deleteById(Long id) {
+        courseJpaRepository.deleteById(id);
+    }
 }
