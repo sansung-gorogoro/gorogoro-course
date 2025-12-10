@@ -1,6 +1,8 @@
 package com.lxp.course.domain;
 
 import com.lxp.course.domain.spec.CreateCourseSpec.CreateChapterSpec;
+import com.lxp.course.domain.spec.UpdateCourseSpec.UpdateChapterSpec;
+import com.lxp.course.domain.spec.UpdateCourseSpec.UpdateLessonSpec;
 import com.lxp.course.exception.BusinessException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -20,8 +22,11 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.lxp.course.domain.common.CommonStaticFieldName.ALLOWED_TITLE_LENGTH;
 import static com.lxp.course.domain.common.CommonStaticFieldName.CHAPTER;
@@ -56,7 +61,6 @@ public class Chapter {
 
     private Chapter(String title, Integer seq, List<Lesson> lessons, Course course) {
         validateTitle(title);
-        validateDuplicateLessonSeq(lessons);
 
         this.title = title;
         this.seq = requireNonNull(seq, SEQ);
@@ -77,6 +81,30 @@ public class Chapter {
         chapter.addAllLesson(lessons);
 
         return chapter;
+    }
+
+    void update(UpdateChapterSpec spec) {
+        this.title = spec.title() == null ? this.title : spec.title();
+        this.seq = spec.seq() == null ? this.seq : spec.seq();
+
+        updateLessons(spec.lessonSpecs());
+    }
+
+    private void updateLessons(List<UpdateLessonSpec> changes) {
+        Map<Long, UpdateLessonSpec> idChangeMap = changes.stream().collect(Collectors.toMap(
+            UpdateLessonSpec::lessonId,
+            Function.identity()
+        ));
+
+        //기존의 엔티티 수정
+        this.lessons.forEach(lesson ->
+            Optional.ofNullable(idChangeMap.get(lesson.getId()))
+                .ifPresent(lesson::update)
+        );
+
+        validateDuplicateLessonSeq(this.lessons);
+
+        updated();
     }
 
     private void validateDuplicateLessonSeq(List<Lesson> lessons) {
@@ -103,6 +131,12 @@ public class Chapter {
     }
 
     private void addAllLesson(List<Lesson> lessons) {
+        validateDuplicateLessonSeq(lessons);
+
         this.lessons.addAll(lessons);
+    }
+
+    private void updated() {
+        this.updateTime = Instant.now();
     }
 }

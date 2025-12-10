@@ -5,6 +5,11 @@ import com.lxp.course.exception.BusinessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Lob;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.Objects;
 
 import static com.lxp.course.domain.common.CommonStaticFieldName.COURSE;
 import static com.lxp.course.domain.common.CommonStaticFieldName.DESCRIPTION;
@@ -17,16 +22,21 @@ import static com.lxp.course.domain.common.CommonValidator.requireNotBlank;
 import static com.lxp.course.domain.exception.CourseErrorCode.COURSE_TITLE_TOO_LONG;
 
 @Embeddable
-public record CourseBody(
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class CourseBody {
+
     @Column(nullable = false, length = ALLOWED_TITLE_LENGTH)
-    String title,
+    private String title;
+
     @Column(nullable = false, length = ALLOWED_SUMMARY_LENGTH)
-    String summary,
-    @Column(nullable = false)
+    private String summary;
+
     @Lob
-    String description
-) {
-    public CourseBody {
+    @Column(nullable = false)
+    private String description;
+
+    public CourseBody(String title, String summary, String description) {
         requireNotBlank(title, COURSE, TITLE);
         requireNotBlank(summary, SUMMARY, TITLE);
         requireNotBlank(description, DESCRIPTION, TITLE);
@@ -39,9 +49,33 @@ public record CourseBody(
 
         if (description.length() > ALLOWED_DESCRIPTION_LENGTH)
             throw BusinessException.builder(CourseErrorCode.COURSE_DESCRIPTION_TOO_LONG).build();
+
+        this.title = title;
+        this.summary = summary;
+        this.description = description;
     }
 
-    public CourseBody getBody() {
-        return new CourseBody(title, summary, description);
+    public CourseBody update(String title, String summary, String description) {
+        CourseBody newCourseBody = new CourseBody(
+            title == null ? this.title : title,
+            summary == null ? this.summary : summary,
+            description == null ? this.description : description
+        );
+        return this.equals(newCourseBody) ? this : newCourseBody;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CourseBody that = (CourseBody) o;
+        return Objects.equals(title, that.title)
+            && Objects.equals(summary, that.summary)
+            && Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, summary, description);
     }
 }
