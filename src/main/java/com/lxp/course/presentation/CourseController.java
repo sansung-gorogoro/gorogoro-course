@@ -48,7 +48,7 @@ public class CourseController implements CourseApi {
     }
 
     @GetMapping
-    public CourseSummaryResponse getCourses() {
+    public CourseSummaryResponse getCoursesSummary() {
         return CourseSummaryResponse.of(getCourseUseCase.getCoursesSummaryExecute());
     }
 
