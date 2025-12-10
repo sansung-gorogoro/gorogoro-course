@@ -19,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
@@ -56,13 +57,14 @@ public class Course {
     private CourseAccessPolicy accessPolicy;
     @Column(nullable = false)
     private Long categoryId;
+    @Getter
     @Column(nullable = false)
     private Long instructorId;
     private String coverImageUrl;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CourseDifficulty difficulty;
-    @OneToMany(mappedBy = COURSE, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = COURSE, cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Chapter> chapters;
 
     @Column(updatable = false, nullable = false)
@@ -122,7 +124,7 @@ public class Course {
         updateChapter(spec.chapterCommands());
         validateDuplicateChapterSeq(chapters);
 
-        updated();
+        updatedTime();
     }
 
     private void updateChapter(List<UpdateChapterSpec> changes) {
@@ -163,7 +165,18 @@ public class Course {
         return List.copyOf(chapters);
     }
 
-    private void updated() {
+    public void deleteChapters(List<Long> chapterIds) {
+        chapterIds.forEach(chapterId ->
+            chapters.removeIf(chapter -> chapter.getId().equals(chapterId))
+        );
+    }
+
+    public void deleteLessons(Long chapterId, List<Long> lessonIds) {
+        chapters.stream().filter(chapter -> chapter.getId().equals(chapterId))
+            .findFirst().ifPresent(chapter -> chapter.deleteLessons(lessonIds));
+    }
+
+    private void updatedTime() {
         this.updateTime = Instant.now();
     }
 }

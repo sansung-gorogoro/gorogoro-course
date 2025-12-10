@@ -50,7 +50,7 @@ public class Chapter {
     private String title;
     @Column(nullable = false)
     private Integer seq;
-    @OneToMany(mappedBy = CHAPTER, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = CHAPTER, cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Lesson> lessons;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", nullable = false)
@@ -88,6 +88,12 @@ public class Chapter {
         this.seq = spec.seq() == null ? this.seq : spec.seq();
 
         updateLessons(spec.lessonSpecs());
+    }
+
+    void deleteLessons(List<Long> lessonIds) {
+        lessonIds.forEach(lessonId ->
+            lessons.removeIf(lesson -> lesson.getId().equals(lessonId))
+        );
     }
 
     private void updateLessons(List<UpdateLessonSpec> changes) {

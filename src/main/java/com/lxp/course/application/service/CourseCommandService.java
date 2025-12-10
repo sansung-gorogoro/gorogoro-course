@@ -1,8 +1,13 @@
 package com.lxp.course.application.service;
 
 import com.lxp.course.application.port.in.CreateCourseUseCase;
+import com.lxp.course.application.port.in.DeleteChapterUseCase;
+import com.lxp.course.application.port.in.DeleteCourseUseCase;
+import com.lxp.course.application.port.in.DeleteLessonUseCase;
 import com.lxp.course.application.port.in.UpdateCourseUseCase;
 import com.lxp.course.application.port.in.command.CreateCourseCommand;
+import com.lxp.course.application.port.in.command.DeleteChaptersCommand;
+import com.lxp.course.application.port.in.command.DeleteLessonsCommand;
 import com.lxp.course.application.port.in.command.UpdateCourseCommand;
 import com.lxp.course.domain.Course;
 import com.lxp.course.domain.exception.CourseErrorCode;
@@ -12,10 +17,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CourseCommandService implements CreateCourseUseCase, UpdateCourseUseCase {
+public class CourseCommandService implements
+    CreateCourseUseCase, UpdateCourseUseCase, DeleteCourseUseCase,
+    DeleteChapterUseCase, DeleteLessonUseCase
+{
     private final CourseRepository courseRepository;
 
     @Override
@@ -25,9 +35,42 @@ public class CourseCommandService implements CreateCourseUseCase, UpdateCourseUs
 
     @Override
     public void updateExecute(UpdateCourseCommand command) {
-        Course course = findByIdOrThrow(command.courseId());
+        Course course = findByIdWithOrThrow(command.courseId());
 
         course.update(command.toSpec());
+    }
+
+    @Override
+    public void deleteCourseExecute(Long courseId, Long instructorId) {
+        Course course = findByIdOrThrow(courseId);
+        validateOwnership(course.getInstructorId(), instructorId);
+
+        courseRepository.deleteById(courseId);
+    }
+
+    @Override
+    public void deleteChapterExecute(DeleteChaptersCommand command) {
+        Course foundCourse = findByIdWithOrThrow(command.courseId());
+        validateOwnership(foundCourse.getInstructorId(), command.instructorId());
+
+        foundCourse.deleteChapters(command.chapterIds());
+    }
+
+    @Override
+    public void deleteLessonExecute(DeleteLessonsCommand command) {
+        Course foundCourse = findByIdWithOrThrow(command.courseId());
+        validateOwnership(foundCourse.getInstructorId(), command.instructorId());
+
+        foundCourse.deleteLessons(command.chapterId(), command.lessonIds());
+    }
+
+    private Course findByIdWithOrThrow(Long courseId) {
+        return courseRepository.findByIdWith(courseId)
+            .orElseThrow(() ->
+                BusinessException.builder(CourseErrorCode.COURSE_NOT_FOUND)
+                    .withField(courseId.toString())
+                    .build()
+            );
     }
 
     private Course findByIdOrThrow(Long courseId) {
@@ -37,5 +80,12 @@ public class CourseCommandService implements CreateCourseUseCase, UpdateCourseUs
                     .withField(courseId.toString())
                     .build()
             );
+    }
+
+    private void validateOwnership(Long instructorIdFromCourse, Long instructorIdFromAuth) {
+        if (!Objects.equals(instructorIdFromCourse, instructorIdFromAuth)) {
+            throw BusinessException.builder(CourseErrorCode.COURSE_OWNERSHIP_EXCEPTION)
+                .build();
+        }
     }
 }

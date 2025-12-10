@@ -17,7 +17,8 @@ public enum CourseErrorCode implements ErrorCode {
     LESSON_TITLE_TOO_LONG("레슨 제목은 최대 30자까지 가능합니다.", HttpStatus.BAD_REQUEST, "COS-0010"),
 
     DUPLICATED_SEQ("중복된 시퀀스가 존재합니다.", HttpStatus.BAD_REQUEST, "COS-0011"),
-    COURSE_NOT_FOUND("강좌를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, "COS-0012");
+    COURSE_NOT_FOUND("강좌를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, "COS-0012"),
+    COURSE_OWNERSHIP_EXCEPTION("해당 유저는 강의의 소유자가 아닙니다.", HttpStatus.FORBIDDEN, "COS-0013");
     private final String message;
     private final HttpStatus status;
     private final String code;
