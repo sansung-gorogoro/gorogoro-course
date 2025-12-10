@@ -4,6 +4,7 @@ import java.util.List;
 
 public record DeleteChaptersCommand(
     Long courseId,
+    Long instructorId,
     List<Long> chapterIds
 ) {
 }
