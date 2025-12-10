@@ -73,6 +73,7 @@ public class Course {
     private String coverImageUrl;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Getter
     private CourseDifficulty difficulty;
     @OneToMany(mappedBy = COURSE, cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Chapter> chapters;
