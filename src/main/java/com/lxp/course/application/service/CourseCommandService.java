@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -33,29 +35,42 @@ public class CourseCommandService implements
 
     @Override
     public void updateExecute(UpdateCourseCommand command) {
-        Course course = findByIdOrThrow(command.courseId());
+        Course course = findByIdWithOrThrow(command.courseId());
 
         course.update(command.toSpec());
     }
 
     @Override
-    public void deleteCourseExecute(Long courseId) {
-        //TODO(Ownership) 확인
+    public void deleteCourseExecute(Long courseId, Long instructorId) {
+        Course course = findByIdOrThrow(courseId);
+        validateOwnership(course.getInstructorId(), instructorId);
+
         courseRepository.deleteById(courseId);
     }
 
     @Override
     public void deleteChapterExecute(DeleteChaptersCommand command) {
-        //TODO(Ownership) 확인
-        findByIdOrThrow(command.courseId())
-            .deleteChapters(command.chapterIds());
+        Course foundCourse = findByIdWithOrThrow(command.courseId());
+        validateOwnership(foundCourse.getInstructorId(), command.instructorId());
+
+        foundCourse.deleteChapters(command.chapterIds());
     }
 
     @Override
     public void deleteLessonExecute(DeleteLessonsCommand command) {
-        //TODO(Ownership) 확인
-        findByIdOrThrow(command.courseId())
-            .deleteLessons(command.chapterId(), command.lessonIds());
+        Course foundCourse = findByIdWithOrThrow(command.courseId());
+        validateOwnership(foundCourse.getInstructorId(), command.instructorId());
+
+        foundCourse.deleteLessons(command.chapterId(), command.lessonIds());
+    }
+
+    private Course findByIdWithOrThrow(Long courseId) {
+        return courseRepository.findByIdWith(courseId)
+            .orElseThrow(() ->
+                BusinessException.builder(CourseErrorCode.COURSE_NOT_FOUND)
+                    .withField(courseId.toString())
+                    .build()
+            );
     }
 
     private Course findByIdOrThrow(Long courseId) {
@@ -65,5 +80,12 @@ public class CourseCommandService implements
                     .withField(courseId.toString())
                     .build()
             );
+    }
+
+    private void validateOwnership(Long instructorIdFromCourse, Long instructorIdFromAuth) {
+        if (!Objects.equals(instructorIdFromCourse, instructorIdFromAuth)) {
+            throw BusinessException.builder(CourseErrorCode.COURSE_OWNERSHIP_EXCEPTION)
+                .build();
+        }
     }
 }
