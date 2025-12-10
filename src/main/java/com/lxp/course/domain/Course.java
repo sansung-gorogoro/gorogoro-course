@@ -167,9 +167,9 @@ public class Course {
             .orElse(List.of())
             .stream().map(spec -> Chapter.create(spec, course)).toList();
 
-        validateDuplicateChapterSeq(chapters);
-
         this.chapters.addAll(chapters);
+
+        validateDuplicateChapterSeq(this.chapters);
     }
 
     public List<Chapter> getChapters() {
