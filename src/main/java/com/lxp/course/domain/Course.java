@@ -62,7 +62,7 @@ public class Course {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CourseDifficulty difficulty;
-    @OneToMany(mappedBy = COURSE, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = COURSE, cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Chapter> chapters;
 
     @Column(updatable = false, nullable = false)
@@ -161,6 +161,17 @@ public class Course {
 
     public List<Chapter> getChapters() {
         return List.copyOf(chapters);
+    }
+
+    public void deleteChapters(List<Long> chapterIds) {
+        chapterIds.forEach(chapterId ->
+            chapters.removeIf(chapter -> chapter.getId().equals(chapterId))
+        );
+    }
+
+    public void deleteLessons(Long chapterId, List<Long> lessonIds) {
+        chapters.stream().filter(chapter -> chapter.getId().equals(chapterId))
+            .findFirst().ifPresent(chapter -> chapter.deleteLessons(lessonIds));
     }
 
     private void updated() {
