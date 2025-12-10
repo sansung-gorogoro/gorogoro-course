@@ -9,14 +9,19 @@ import com.lxp.course.application.port.in.command.CreateCourseCommand;
 import com.lxp.course.application.port.in.command.DeleteChaptersCommand;
 import com.lxp.course.application.port.in.command.DeleteLessonsCommand;
 import com.lxp.course.application.port.in.command.UpdateCourseCommand;
+import com.lxp.course.application.port.in.command.UpdateCourseCommand.UpdateChapterCommand;
+import com.lxp.course.application.port.in.command.UpdateCourseCommand.UpdateLessonCommand;
 import com.lxp.course.domain.Course;
 import com.lxp.course.domain.exception.CourseErrorCode;
 import com.lxp.course.domain.repository.CourseRepository;
+import com.lxp.course.domain.spec.CreateCourseSpec.CreateChapterSpec;
+import com.lxp.course.domain.spec.CreateCourseSpec.CreateLessonSpec;
 import com.lxp.course.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -24,8 +29,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CourseCommandService implements
     CreateCourseUseCase, UpdateCourseUseCase, DeleteCourseUseCase,
-    DeleteChapterUseCase, DeleteLessonUseCase
-{
+    DeleteChapterUseCase, DeleteLessonUseCase {
     private final CourseRepository courseRepository;
 
     @Override
@@ -39,6 +43,23 @@ public class CourseCommandService implements
         validateOwnership(course.getInstructorId(), command.instructorId());
 
         course.update(command.toSpec());
+
+        List<CreateChapterSpec> chapterCreateSpecs = command.chapterCommands().stream()
+            .filter(chapterCommand -> chapterCommand.chapterId() == null)
+            .map(UpdateChapterCommand::toCreateSpec)
+            .toList();
+
+        course.addChapters(chapterCreateSpecs);
+
+        command.chapterCommands().stream()
+            .filter(chapterCommand -> chapterCommand.chapterId() != null)
+            .forEach(chapterCommand -> {
+                List<CreateLessonSpec> createLessonSpecs = chapterCommand.lessonCommands().stream()
+                    .filter(lessonCommand -> lessonCommand.lessonId() == null)
+                    .map(UpdateLessonCommand::toCreateSpec).toList();
+
+                course.addLessons(createLessonSpecs, chapterCommand.chapterId());
+            });
     }
 
     @Override
