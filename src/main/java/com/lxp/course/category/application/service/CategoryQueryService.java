@@ -6,6 +6,7 @@ import com.lxp.course.category.domain.Category;
 import com.lxp.course.category.domain.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryService implements GetCategoriesUseCase {
+@Transactional(readOnly = true)
+public class CategoryQueryService implements GetCategoriesUseCase {
     private final CategoryRepository categoryRepository;
 
     @Override
