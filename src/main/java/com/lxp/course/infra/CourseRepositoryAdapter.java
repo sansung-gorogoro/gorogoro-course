@@ -38,4 +38,9 @@ public class CourseRepositoryAdapter implements CourseRepository {
     public Optional<Course> findById(Long id) {
         return courseJpaRepository.findById(id);
     }
+
+    @Override
+    public List<Course> findAllByInstructorId(Long instructorId) {
+        return courseJpaRepository.findAllByInstructorId(instructorId);
+    }
 }
