@@ -122,7 +122,7 @@ public class Course {
         updateChapter(spec.chapterCommands());
         validateDuplicateChapterSeq(chapters);
 
-        updated();
+        updatedTime();
     }
 
     private void updateChapter(List<UpdateChapterSpec> changes) {
@@ -174,7 +174,7 @@ public class Course {
             .findFirst().ifPresent(chapter -> chapter.deleteLessons(lessonIds));
     }
 
-    private void updated() {
+    private void updatedTime() {
         this.updateTime = Instant.now();
     }
 }
