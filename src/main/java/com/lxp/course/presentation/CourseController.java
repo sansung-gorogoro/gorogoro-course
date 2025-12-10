@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,24 +36,28 @@ public class CourseController implements CourseApi {
     private final DeleteLessonUseCase deleteLessonUseCase;
 
     @PostMapping
-    public void createCourse(@Valid @RequestBody CreateCourseRequest request) {
-        createCourseUseCase.createExecute(request.toCommand(1L));
+    public void createCourse(
+        @RequestHeader("X-User-Id") Long instructorId,
+        @Valid @RequestBody CreateCourseRequest request
+    ) {
+        createCourseUseCase.createExecute(request.toCommand(instructorId));
     }
 
     @PutMapping("/{courseId}")
     public void updateCourse(
         @PathVariable Long courseId,
+        @RequestHeader("X-User-Id") Long instructorId,
         @Valid @RequestBody UpdateCourseRequest request
     ) {
-        updateCourseUseCase.updateExecute(request.toCommand(courseId));
+        updateCourseUseCase.updateExecute(request.toCommand(courseId, instructorId));
     }
 
     @DeleteMapping("/{courseId}")
     public ResponseEntity<Void> deleteCourse(
         @PathVariable Long courseId,
-        Long userId
+        @RequestHeader("X-User-Id") Long instructorId
     ) {
-        deleteCourseUseCase.deleteCourseExecute(courseId, 1L);
+        deleteCourseUseCase.deleteCourseExecute(courseId, instructorId);
 
         return ResponseEntity.status(NO_CONTENT).build();
     }
@@ -60,10 +65,11 @@ public class CourseController implements CourseApi {
     @DeleteMapping("/{courseId}/chapters")
     public ResponseEntity<Void> deleteChapters(
         @PathVariable Long courseId,
+        @RequestHeader("X-User-Id") Long instructorId,
         @RequestBody DeleteChaptersRequest request
     ) {
         deleteChapterUseCase.deleteChapterExecute(
-            new DeleteChaptersCommand(courseId, 1L, request.chapterIds())
+            new DeleteChaptersCommand(courseId, instructorId, request.chapterIds())
         );
 
         return ResponseEntity.status(NO_CONTENT).build();
@@ -73,10 +79,11 @@ public class CourseController implements CourseApi {
     public ResponseEntity<Void> deleteLessons(
         @PathVariable Long courseId,
         @PathVariable Long chapterId,
+        @RequestHeader("X-User-Id") Long instructorId,
         @RequestBody DeleteLessonsRequest request
     ) {
         deleteLessonUseCase.deleteLessonExecute(
-            new DeleteLessonsCommand(courseId, chapterId, 1L, request.lessonIds())
+            new DeleteLessonsCommand(courseId, chapterId, instructorId, request.lessonIds())
         );
 
         return ResponseEntity.status(NO_CONTENT).build();

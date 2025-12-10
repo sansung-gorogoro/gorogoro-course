@@ -1,6 +1,7 @@
 package com.lxp.course.domain;
 
 import com.lxp.course.domain.spec.CreateCourseSpec.CreateChapterSpec;
+import com.lxp.course.domain.spec.CreateCourseSpec.CreateLessonSpec;
 import com.lxp.course.domain.spec.UpdateCourseSpec.UpdateChapterSpec;
 import com.lxp.course.domain.spec.UpdateCourseSpec.UpdateLessonSpec;
 import com.lxp.course.exception.BusinessException;
@@ -72,13 +73,7 @@ public class Chapter {
 
     static Chapter create(CreateChapterSpec spec, Course course) {
         Chapter chapter = new Chapter(spec.title(), spec.seq(), new ArrayList<>(), course);
-
-        List<Lesson> lessons =
-            Optional.ofNullable(spec.lessonSpecs())
-                .orElse(List.of())
-                .stream().map(lessonSpec -> Lesson.create(lessonSpec, chapter)).toList();
-
-        chapter.addAllLesson(lessons);
+        chapter.addAllLesson(spec.lessonSpecs(), chapter);
 
         return chapter;
     }
@@ -88,6 +83,10 @@ public class Chapter {
         this.seq = spec.seq() == null ? this.seq : spec.seq();
 
         updateLessons(spec.lessonSpecs());
+    }
+
+    void addLessons(List<CreateLessonSpec> specs) {
+        addAllLesson(specs, this);
     }
 
     void deleteLessons(List<Long> lessonIds) {
@@ -136,7 +135,12 @@ public class Chapter {
             throw BusinessException.builder(CHAPTER_TITLE_TOO_LONG).build();
     }
 
-    private void addAllLesson(List<Lesson> lessons) {
+    private void addAllLesson(List<CreateLessonSpec> specs, Chapter chapter) {
+        List<Lesson> lessons =
+            Optional.ofNullable(specs)
+                .orElse(List.of())
+                .stream().map(lessonSpec -> Lesson.create(lessonSpec, chapter)).toList();
+
         validateDuplicateLessonSeq(lessons);
 
         this.lessons.addAll(lessons);

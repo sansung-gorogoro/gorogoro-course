@@ -2,6 +2,8 @@ package com.lxp.course.domain;
 
 import com.lxp.course.domain.enums.CourseDifficulty;
 import com.lxp.course.domain.spec.CreateCourseSpec;
+import com.lxp.course.domain.spec.CreateCourseSpec.CreateChapterSpec;
+import com.lxp.course.domain.spec.CreateCourseSpec.CreateLessonSpec;
 import com.lxp.course.domain.spec.UpdateCourseSpec;
 import com.lxp.course.domain.spec.UpdateCourseSpec.UpdateChapterSpec;
 import com.lxp.course.domain.vo.CourseAccessPolicy;
@@ -91,20 +93,16 @@ public class Course {
     }
 
     public static Course create(
-        CreateCourseSpec mapper
+        CreateCourseSpec spec
     ) {
         Course course = new Course(
-            mapper.courseBody(), mapper.categoryId(),
-            mapper.instructorId(), mapper.price(),
-            mapper.accessPolicy(), mapper.coverImageUrl(),
-            mapper.difficulty(), new ArrayList<>()
+            spec.courseBody(), spec.categoryId(),
+            spec.instructorId(), spec.price(),
+            spec.accessPolicy(), spec.coverImageUrl(),
+            spec.difficulty(), new ArrayList<>()
         );
 
-        List<Chapter> chapters = Optional.ofNullable(mapper.chapterSpecs())
-            .orElse(List.of())
-            .stream().map(spec -> Chapter.create(spec, course)).toList();
-
-        course.addAllChapter(chapters);
+        course.addAllChapter(spec.chapterSpecs(), course);
 
         return course;
     }
@@ -139,6 +137,15 @@ public class Course {
         );
     }
 
+    public void addChapters(List<CreateChapterSpec> specs) {
+        addAllChapter(specs, this);
+    }
+
+    public void addLessons(List<CreateLessonSpec> specs, Long chapterId) {
+        chapters.stream().filter(chapter -> chapter.getId().equals(chapterId))
+            .findFirst().ifPresent(chapter -> chapter.addLessons(specs));
+    }
+
     private void validateDuplicateChapterSeq(List<Chapter> chapters) {
         if (chapters == null || chapters.isEmpty()) return;
 
@@ -155,10 +162,14 @@ public class Course {
         });
     }
 
-    private void addAllChapter(List<Chapter> chapters) {
-        validateDuplicateChapterSeq(chapters);
+    private void addAllChapter(List<CreateChapterSpec> specs, Course course) {
+        List<Chapter> chapters = Optional.ofNullable(specs)
+            .orElse(List.of())
+            .stream().map(spec -> Chapter.create(spec, course)).toList();
 
         this.chapters.addAll(chapters);
+
+        validateDuplicateChapterSeq(this.chapters);
     }
 
     public List<Chapter> getChapters() {

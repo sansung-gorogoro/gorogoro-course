@@ -55,12 +55,12 @@ public record UpdateCourseRequest(
         }
     }
 
-    public UpdateCourseCommand toCommand(Long courseId) {
+    public UpdateCourseCommand toCommand(Long courseId, Long instructorId) {
         List<UpdateChapterCommand> chapterCommands =
             contents.stream().map(UpdateChapterRequest::toCommand).toList();
 
         return new UpdateCourseCommand(
-            courseId, title, summary, description,
+            courseId, instructorId, title, summary, description,
             categoryId, price, availableDays,
             coverImageUrl, courseDifficulty, chapterCommands
         );
