@@ -1,8 +1,13 @@
 package com.lxp.course.application.service;
 
 import com.lxp.course.application.port.in.CreateCourseUseCase;
+import com.lxp.course.application.port.in.DeleteChapterUseCase;
+import com.lxp.course.application.port.in.DeleteCourseUseCase;
+import com.lxp.course.application.port.in.DeleteLessonUseCase;
 import com.lxp.course.application.port.in.UpdateCourseUseCase;
 import com.lxp.course.application.port.in.command.CreateCourseCommand;
+import com.lxp.course.application.port.in.command.DeleteChaptersCommand;
+import com.lxp.course.application.port.in.command.DeleteLessonsCommand;
 import com.lxp.course.application.port.in.command.UpdateCourseCommand;
 import com.lxp.course.domain.Course;
 import com.lxp.course.domain.exception.CourseErrorCode;
@@ -15,7 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CourseCommandService implements CreateCourseUseCase, UpdateCourseUseCase {
+public class CourseCommandService implements
+    CreateCourseUseCase, UpdateCourseUseCase, DeleteCourseUseCase,
+    DeleteChapterUseCase, DeleteLessonUseCase
+{
     private final CourseRepository courseRepository;
 
     @Override
@@ -28,6 +36,26 @@ public class CourseCommandService implements CreateCourseUseCase, UpdateCourseUs
         Course course = findByIdOrThrow(command.courseId());
 
         course.update(command.toSpec());
+    }
+
+    @Override
+    public void deleteCourseExecute(Long courseId) {
+        //TODO(Ownership) 확인
+        courseRepository.deleteById(courseId);
+    }
+
+    @Override
+    public void deleteChapterExecute(DeleteChaptersCommand command) {
+        //TODO(Ownership) 확인
+        findByIdOrThrow(command.courseId())
+            .deleteChapters(command.chapterIds());
+    }
+
+    @Override
+    public void deleteLessonExecute(DeleteLessonsCommand command) {
+        //TODO(Ownership) 확인
+        findByIdOrThrow(command.courseId())
+            .deleteLessons(command.chapterId(), command.lessonIds());
     }
 
     private Course findByIdOrThrow(Long courseId) {
