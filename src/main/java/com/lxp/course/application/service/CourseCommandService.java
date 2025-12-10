@@ -36,6 +36,7 @@ public class CourseCommandService implements
     @Override
     public void updateExecute(UpdateCourseCommand command) {
         Course course = findByIdWithOrThrow(command.courseId());
+        validateOwnership(course.getInstructorId(), command.instructorId());
 
         course.update(command.toSpec());
     }

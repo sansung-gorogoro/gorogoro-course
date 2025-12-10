@@ -46,9 +46,10 @@ public class CourseController implements CourseApi {
     @PutMapping("/{courseId}")
     public void updateCourse(
         @PathVariable Long courseId,
+        @RequestHeader("X-User-Id") Long instructorId,
         @Valid @RequestBody UpdateCourseRequest request
     ) {
-        updateCourseUseCase.updateExecute(request.toCommand(courseId));
+        updateCourseUseCase.updateExecute(request.toCommand(courseId, instructorId));
     }
 
     @DeleteMapping("/{courseId}")
