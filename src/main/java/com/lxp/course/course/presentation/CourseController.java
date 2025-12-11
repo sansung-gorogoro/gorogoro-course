@@ -28,8 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
@@ -59,12 +57,6 @@ public class CourseController implements CourseApi {
     @GetMapping("/{courseId}")
     public CourseDetailResponse getCourse(@PathVariable Long courseId) {
         return CourseDetailResponse.of(getCourseUseCase.getCourseDetail(courseId));
-    }
-
-    @GetMapping
-    public List<CourseDetailResponse> getCourseDetails(@RequestParam List<Long> courseIds) {
-        return getCourseUseCase.getCourseDetails(courseIds).stream()
-            .map(CourseDetailResponse::of).toList();
     }
 
     @PutMapping("/{courseId}")
