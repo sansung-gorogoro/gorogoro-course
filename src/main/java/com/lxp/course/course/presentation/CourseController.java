@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
-@RequestMapping("/api/v1/courses")
+@RequestMapping("/api/courses")
 @RequiredArgsConstructor
 public class CourseController implements CourseApi {
     private final CreateCourseUseCase createCourseUseCase;
