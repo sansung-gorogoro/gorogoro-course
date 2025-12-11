@@ -12,6 +12,7 @@ import com.lxp.course.course.presentation.request.CreateCourseRequest;
 import com.lxp.course.course.presentation.request.DeleteChaptersRequest;
 import com.lxp.course.course.presentation.request.DeleteLessonsRequest;
 import com.lxp.course.course.presentation.request.UpdateCourseRequest;
+import com.lxp.course.course.presentation.response.CourseDetailResponse;
 import com.lxp.course.course.presentation.response.CourseSummaryResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -48,11 +50,13 @@ public class CourseController implements CourseApi {
     }
 
     @GetMapping
-    public CourseSummaryResponse getCoursesSummary() {
-        return CourseSummaryResponse.of(getCourseUseCase.getCoursesSummaryExecute());
     public CourseSummaryResponse getCoursesSummary(@RequestParam Long categoryId) {
         return CourseSummaryResponse.of(getCourseUseCase.getCoursesSummaryExecute(categoryId));
     }
+
+    @GetMapping("/{courseId}")
+    public CourseDetailResponse getCourse(@PathVariable Long courseId) {
+        return CourseDetailResponse.of(getCourseUseCase.getCourseDetail(courseId));
     }
 
     @PutMapping("/{courseId}")
