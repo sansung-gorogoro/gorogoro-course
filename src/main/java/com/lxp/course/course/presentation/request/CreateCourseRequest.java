@@ -33,7 +33,7 @@ public record CreateCourseRequest(
     List<CreateChapterRequest> contents,
     @NotNull(message = "이용가능한 날을 선택해주세요")
     @PositiveOrZero(message = "이용 가능한 날은 0이상 설정해주세요.")
-    Integer availableDays
+    Integer accessDays
 ) {
     record CreateChapterRequest(
         @NotBlank(message = "챕터 제목을 작성해주세요.")
@@ -69,7 +69,7 @@ public record CreateCourseRequest(
 
         return new CreateCourseCommand(
             title, summary, description,
-            categoryId, instructorId, price, availableDays,
+            categoryId, instructorId, price, accessDays,
             coverImageUrl, courseDifficulty, chapterCommands
         );
     }
