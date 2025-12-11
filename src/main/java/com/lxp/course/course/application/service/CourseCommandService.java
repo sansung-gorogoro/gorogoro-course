@@ -10,6 +10,7 @@ import com.lxp.course.course.application.port.in.command.DeleteChaptersCommand;
 import com.lxp.course.course.application.port.in.command.DeleteLessonsCommand;
 import com.lxp.course.course.application.port.in.command.UpdateCourseCommand;
 import com.lxp.course.course.application.port.in.command.UpdateCourseCommand.UpdateChapterCommand;
+import com.lxp.course.course.application.port.out.CourseEventPublisher;
 import com.lxp.course.course.domain.Course;
 import com.lxp.course.course.domain.exception.CourseErrorCode;
 import com.lxp.course.course.domain.repository.CourseRepository;
@@ -30,6 +31,7 @@ public class CourseCommandService implements
     CreateCourseUseCase, UpdateCourseUseCase, DeleteCourseUseCase,
     DeleteChapterUseCase, DeleteLessonUseCase {
     private final CourseRepository courseRepository;
+    private final CourseEventPublisher courseEventPublisher;
 
     @Override
     public void createExecute(CreateCourseCommand command) {
@@ -67,6 +69,8 @@ public class CourseCommandService implements
         validateOwnership(course.getInstructorId(), instructorId);
 
         courseRepository.deleteById(courseId);
+
+        courseEventPublisher.deleteEventPublish(courseId);
     }
 
     @Override
