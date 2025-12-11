@@ -1,5 +1,6 @@
 package com.lxp.course.course.infra.jpa;
 
+import com.lxp.course.category.domain.QCategory;
 import com.lxp.course.course.domain.Chapter;
 import com.lxp.course.course.domain.Course;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -8,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.Optional;
 
-import static com.lxp.course.domain.QChapter.chapter;
-import static com.lxp.course.domain.QCourse.course;
-import static com.lxp.course.domain.QLesson.lesson;
+import static com.lxp.course.course.domain.QChapter.chapter;
+import static com.lxp.course.course.domain.QCourse.course;
+import static com.lxp.course.course.domain.QLesson.lesson;
 
 @RequiredArgsConstructor
 public class CustomCourseJpaRepositoryImpl implements CustomCourseJpaRepository {
@@ -33,5 +34,21 @@ public class CustomCourseJpaRepositoryImpl implements CustomCourseJpaRepository 
         });
 
         return entity;
+    }
+
+    @Override
+    public List<Course> findAllByCategoryId(Long categoryId) {
+        QCategory child = QCategory.category;
+        QCategory parent = new QCategory("parentCategory");
+
+        return jpaQueryFactory
+            .selectFrom(course)
+            .join(child).on(course.categoryId.eq(child.id))
+            .leftJoin(child.parent, parent)
+            .where(
+                child.id.eq(categoryId)
+                    .or(parent.id.eq(categoryId))
+            )
+            .fetch();
     }
 }

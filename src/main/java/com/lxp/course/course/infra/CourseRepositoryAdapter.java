@@ -25,7 +25,7 @@ public class CourseRepositoryAdapter implements CourseRepository {
     }
 
     @Override
-    public List<Course> findAll() {
+    public List<Course> findAllByCategoryId(Long categoryId) {
         return courseJpaRepository.findAll();
     }
 
