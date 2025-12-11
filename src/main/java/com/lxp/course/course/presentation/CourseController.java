@@ -61,8 +61,8 @@ public class CourseController implements CourseApi {
         return CourseDetailResponse.of(getCourseUseCase.getCourseDetail(courseId));
     }
 
-    @GetMapping("/{courseIds}")
-    public List<CourseDetailResponse> getCourseDetails(@PathVariable List<Long> courseIds) {
+    @GetMapping
+    public List<CourseDetailResponse> getCourseDetails(@RequestParam List<Long> courseIds) {
         return getCourseUseCase.getCourseDetails(courseIds).stream()
             .map(CourseDetailResponse::of).toList();
     }
