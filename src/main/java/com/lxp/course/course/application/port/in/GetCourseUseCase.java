@@ -12,4 +12,6 @@ public interface GetCourseUseCase {
     List<CourseSummaryInstructorDto> getCoursesSummaryInstructorExecute(Long instructorId);
 
     CourseDetailDto getCourseDetail(Long courseId);
+
+    List<CourseDetailDto> getCourseDetails(List<Long> courseIds);
 }
