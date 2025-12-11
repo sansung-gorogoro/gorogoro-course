@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface GetCourseUseCase {
     List<CourseSummaryDto> getCoursesSummaryExecute();
+    List<CourseSummaryDto> getCoursesSummaryExecute(Long categoryId);
 
     List<CourseSummaryInstructorDto> getCoursesSummaryInstructorExecute(Long instructorId);
 }
