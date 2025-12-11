@@ -59,7 +59,9 @@ public class Course {
     @Getter
     private Price price;
     @Embedded
+    @Getter
     private CourseAccessPolicy accessPolicy;
+    @Getter
     @Column(nullable = false)
     private Long categoryId;
     //TODO(강사 이름 필요)

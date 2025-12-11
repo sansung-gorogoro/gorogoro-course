@@ -17,7 +17,7 @@ public record CreateCourseCommand(
     Long categoryId,
     Long instructorId,
     Integer price,
-    Integer accessDay,
+    Integer accessDays,
     String coverImageUrl,
     CourseDifficulty courseDifficulty,
     List<CreateChapterCommand> chapterCommands
@@ -51,7 +51,7 @@ public record CreateCourseCommand(
 
         Price price = new Price(this.price);
         CourseBody courseBody = new CourseBody(title, summary, description);
-        CourseAccessPolicy accessPolicy = new CourseAccessPolicy(accessDay);
+        CourseAccessPolicy accessPolicy = new CourseAccessPolicy(accessDays);
 
         return new CreateCourseSpec(
             courseBody, categoryId, instructorId,
