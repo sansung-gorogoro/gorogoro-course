@@ -50,6 +50,9 @@ public class CourseController implements CourseApi {
     @GetMapping
     public CourseSummaryResponse getCoursesSummary() {
         return CourseSummaryResponse.of(getCourseUseCase.getCoursesSummaryExecute());
+    public CourseSummaryResponse getCoursesSummary(@RequestParam Long categoryId) {
+        return CourseSummaryResponse.of(getCourseUseCase.getCoursesSummaryExecute(categoryId));
+    }
     }
 
     @PutMapping("/{courseId}")
