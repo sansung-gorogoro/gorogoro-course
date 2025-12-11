@@ -11,7 +11,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.FetchType.EAGER;
 
 @Entity
 @Getter
@@ -22,7 +22,7 @@ public class Category {
     private Long id;
     @Column(nullable = false)
     private String name;
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "parent_id")
     private Category parent;
 
