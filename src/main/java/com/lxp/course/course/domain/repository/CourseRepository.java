@@ -12,4 +12,5 @@ public interface CourseRepository {
     void deleteById(Long id);
     Optional<Course> findById(Long id);
     List<Course> findAllByInstructorId(Long instructorId);
+    List<Course> findByAllByIdsWith(List<Long> ids);
 }

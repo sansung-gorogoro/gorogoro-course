@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface CustomCourseJpaRepository {
     Optional<Course> findByIdWith(Long courseId);
+    List<Course> findAllByIdsWith(List<Long> courseIds);
     List<Course> findAllByCategoryId(Long categoryId);
 }

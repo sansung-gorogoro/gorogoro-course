@@ -23,4 +23,9 @@ public class CategoryRepositoryAdaptor implements CategoryRepository {
     public Optional<Category> findById(Long id) {
         return categoryJpaRepository.findById(id);
     }
+
+    @Override
+    public List<Category> findAllByIds(List<Long> ids) {
+        return categoryJpaRepository.findAllById(ids);
+    }
 }

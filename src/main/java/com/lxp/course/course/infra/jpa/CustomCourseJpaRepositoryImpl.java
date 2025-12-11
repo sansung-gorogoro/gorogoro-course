@@ -7,7 +7,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.lxp.course.course.domain.QChapter.chapter;
 import static com.lxp.course.course.domain.QCourse.course;
@@ -34,6 +37,40 @@ public class CustomCourseJpaRepositoryImpl implements CustomCourseJpaRepository 
         });
 
         return entity;
+    }
+
+    @Override
+    public List<Course> findAllByIdsWith(List<Long> courseIds) {
+        if (courseIds == null || courseIds.isEmpty()) {
+            return List.of();
+        }
+
+        List<Course> courses = jpaQueryFactory
+            .selectFrom(course)
+            .distinct()
+            .leftJoin(course.chapters, chapter).fetchJoin()
+            .where(course.id.in(courseIds))
+            .fetch();
+
+        if (courses.isEmpty()) {
+            return courses;
+        }
+
+        Set<Long> chapterIds = courses.stream()
+            .flatMap(course -> course.getChapters().stream())
+            .map(Chapter::getId)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+
+        if (!chapterIds.isEmpty()) {
+            jpaQueryFactory
+                .selectFrom(lesson)
+                .leftJoin(lesson.chapter, chapter).fetchJoin()
+                .where(lesson.chapter.id.in(chapterIds))
+                .fetch();
+        }
+
+        return courses;
     }
 
     @Override

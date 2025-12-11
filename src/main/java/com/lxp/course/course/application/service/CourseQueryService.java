@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.lxp.course.course.domain.exception.CourseErrorCode.COURSE_NOT_FOUND;
 
@@ -49,5 +51,19 @@ public class CourseQueryService implements GetCourseUseCase {
             .orElseThrow(() -> BusinessException.builder(CategoryErrorCode.CATEGORY_NOT_FOUND).build());
 
         return CourseDetailDto.of(foundCourse, foundCategory);
+    }
+
+    @Override
+    public List<CourseDetailDto> getCourseDetails(List<Long> courseIds) {
+        List<Course> foundCourses = courseRepository.findByAllByIdsWith(courseIds);
+
+        List<Long> categoryIds = foundCourses.stream().map(Course::getCategoryId).distinct().toList();
+
+        Map<Long, Category> idFoundCategoryMap = categoryRepository.findAllByIds(categoryIds)
+            .stream().collect(Collectors.toMap(Category::getId, category -> category));
+
+        return foundCourses.stream().map(course ->
+            CourseDetailDto.of(course, idFoundCategoryMap.get(course.getCategoryId()))
+        ).toList();
     }
 }
