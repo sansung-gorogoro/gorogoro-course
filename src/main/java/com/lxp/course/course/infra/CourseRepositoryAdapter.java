@@ -26,7 +26,7 @@ public class CourseRepositoryAdapter implements CourseRepository {
 
     @Override
     public List<Course> findAllByCategoryId(Long categoryId) {
-        return courseJpaRepository.findAll();
+        return courseJpaRepository.findAllByCategoryId(categoryId);
     }
 
     @Override
@@ -42,5 +42,10 @@ public class CourseRepositoryAdapter implements CourseRepository {
     @Override
     public List<Course> findAllByInstructorId(Long instructorId) {
         return courseJpaRepository.findAllByInstructorId(instructorId);
+    }
+
+    @Override
+    public List<Course> findByAllByIdsWith(List<Long> ids) {
+        return courseJpaRepository.findAllByIdsWith(ids);
     }
 }
