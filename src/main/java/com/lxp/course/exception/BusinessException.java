@@ -1,20 +1,24 @@
 package com.lxp.course.exception;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
 public class BusinessException extends RuntimeException {
     private final HttpStatus httpStatus;
     private final String message;
+    private final String code;
     private Throwable cause;
 
     private BusinessException(Builder builder) {
         super(builder.getMessage(), builder.cause);
         this.httpStatus = builder.httpStatus;
         this.message = builder.getMessage();
+        this.code = builder.getCode();
         this.cause = builder.cause;
     }
 
@@ -34,11 +38,13 @@ public class BusinessException extends RuntimeException {
         private final HttpStatus httpStatus;
         private final String messageTemplate;
         private final List<Object> params = new ArrayList<>();
+        private final String code;
         private Throwable cause;
 
         public Builder(ErrorCode errorCode) {
             this.httpStatus = errorCode.getStatus();
             this.messageTemplate = errorCode.getMessage();
+            this.code = errorCode.getCode();
         }
 
         public Builder withId(Long... ids) {
@@ -61,6 +67,10 @@ public class BusinessException extends RuntimeException {
                 return messageTemplate;
             }
             return String.format(messageTemplate, params.toArray());
+        }
+
+        private String getCode() {
+            return code;
         }
 
         public BusinessException build() {

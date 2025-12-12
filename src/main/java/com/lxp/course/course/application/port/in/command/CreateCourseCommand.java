@@ -45,7 +45,7 @@ public record CreateCourseCommand(
         }
     }
 
-    public CreateCourseSpec toSpec() {
+    public CreateCourseSpec toSpec(String instructorName) {
         List<CreateChapterSpec> chapterSpecs =
             chapterCommands.stream().map(CreateChapterCommand::toSpec).toList();
 
@@ -54,7 +54,7 @@ public record CreateCourseCommand(
         CourseAccessPolicy accessPolicy = new CourseAccessPolicy(accessDays);
 
         return new CreateCourseSpec(
-            courseBody, categoryId, instructorId,
+            courseBody, categoryId, instructorId, instructorName,
             price, accessPolicy, coverImageUrl,
             courseDifficulty, chapterSpecs
         );
