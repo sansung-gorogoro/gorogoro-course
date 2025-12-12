@@ -85,7 +85,8 @@ public class Course {
     private Instant updateTime;
 
     private Course(
-        CourseBody courseBody, Long categoryId, Long instructorId,
+        CourseBody courseBody, Long categoryId,
+        Long instructorId, String instructorName,
         Price price, CourseAccessPolicy accessPolicy,
         String coverImageUrl, CourseDifficulty difficulty,
         List<Chapter> chapters
@@ -108,7 +109,7 @@ public class Course {
     ) {
         Course course = new Course(
             spec.courseBody(), spec.categoryId(),
-            spec.instructorId(), spec.price(),
+            spec.instructorId(), spec.instructorName(), spec.price(),
             spec.accessPolicy(), spec.coverImageUrl(),
             spec.difficulty(), new ArrayList<>()
         );

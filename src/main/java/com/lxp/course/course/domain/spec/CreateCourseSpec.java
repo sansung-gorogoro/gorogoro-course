@@ -11,6 +11,7 @@ public record CreateCourseSpec(
     CourseBody courseBody,
     Long categoryId,
     Long instructorId,
+    String instructorName,
     Price price,
     CourseAccessPolicy accessPolicy,
     String coverImageUrl,

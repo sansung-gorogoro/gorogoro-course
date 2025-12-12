@@ -12,6 +12,8 @@ import com.lxp.course.course.application.port.in.command.DeleteLessonsCommand;
 import com.lxp.course.course.application.port.in.command.UpdateCourseCommand;
 import com.lxp.course.course.application.port.in.command.UpdateCourseCommand.UpdateChapterCommand;
 import com.lxp.course.course.application.port.out.CourseEventPublisher;
+import com.lxp.course.course.application.port.out.UserPort;
+import com.lxp.course.course.application.port.out.dto.UserDetailDto;
 import com.lxp.course.course.domain.Course;
 import com.lxp.course.course.domain.event.CourseDeleteEvent;
 import com.lxp.course.course.domain.exception.CourseErrorCode;
@@ -37,10 +39,13 @@ public class CourseCommandService implements
     DeleteChapterUseCase, DeleteLessonUseCase {
     private final CourseRepository courseRepository;
     private final CourseEventPublisher courseEventPublisher;
+    private final UserPort userPort;
 
     @Override
     public void createExecute(CreateCourseCommand command) {
-        courseRepository.save(Course.create(command.toSpec()));
+        UserDetailDto userDetail = userPort.getUserDetail(command.instructorId());
+
+        courseRepository.save(Course.create(command.toSpec(userDetail.nickname())));
     }
 
     @Override
