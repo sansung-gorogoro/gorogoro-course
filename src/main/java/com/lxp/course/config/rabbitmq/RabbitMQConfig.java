@@ -69,6 +69,7 @@ public class RabbitMQConfig {
         factory.setMaxConcurrentConsumers(MAX_CONSUMER_COUNT);
         factory.setPrefetchCount(PREFETCH_COUNT);
         factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        factory.setMessageConverter(jsonMessageConverter());
         return factory;
     }
 
