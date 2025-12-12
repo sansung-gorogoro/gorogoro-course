@@ -1,5 +1,6 @@
 package com.lxp.course.course.application.service;
 
+import com.lxp.course.common.event.DomainEvent;
 import com.lxp.course.course.application.port.in.CreateCourseUseCase;
 import com.lxp.course.course.application.port.in.DeleteChapterUseCase;
 import com.lxp.course.course.application.port.in.DeleteCourseUseCase;
@@ -12,6 +13,7 @@ import com.lxp.course.course.application.port.in.command.UpdateCourseCommand;
 import com.lxp.course.course.application.port.in.command.UpdateCourseCommand.UpdateChapterCommand;
 import com.lxp.course.course.application.port.out.CourseEventPublisher;
 import com.lxp.course.course.domain.Course;
+import com.lxp.course.course.domain.event.CourseDeleteEvent;
 import com.lxp.course.course.domain.exception.CourseErrorCode;
 import com.lxp.course.course.domain.repository.CourseRepository;
 import com.lxp.course.course.domain.spec.CreateCourseSpec;
@@ -23,6 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+
+import static com.lxp.course.course.domain.common.CommonStaticFieldName.DELETE_TYPE;
+import static com.lxp.course.course.domain.common.CommonStaticFieldName.EVENT_VERSION;
 
 @Service
 @Transactional
@@ -70,7 +75,8 @@ public class CourseCommandService implements
 
         courseRepository.deleteById(courseId);
 
-        courseEventPublisher.deleteEventPublish(courseId);
+        DomainEvent event = new CourseDeleteEvent(courseId, DELETE_TYPE, EVENT_VERSION);
+        courseEventPublisher.publish(event);
     }
 
     @Override
