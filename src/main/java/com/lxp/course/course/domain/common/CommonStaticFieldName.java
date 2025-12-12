@@ -18,4 +18,6 @@ public class CommonStaticFieldName {
     public static final int ALLOWED_SUMMARY_LENGTH = 200;
     public static final int ALLOWED_DESCRIPTION_LENGTH = 1000;
     public static final int ALLOWED_PRICE = 0;
+    public static final String DELETE_TYPE = "delete";
+    public static final String EVENT_VERSION = "1.0";
 }
