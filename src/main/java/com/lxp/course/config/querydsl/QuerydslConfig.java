@@ -1,4 +1,4 @@
-package com.lxp.course.config;
+package com.lxp.course.config.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
