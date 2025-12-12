@@ -1,0 +1,26 @@
+server:
+  port: ${PORT}
+
+spring:
+  application:
+    name: lxp-course
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: ${BATCH_SIZE}
+
+  rabbitmq:
+    host: ${SANSEONG_IP}
+    port: 5672
+    username: ${RABBIT_MQ_USERNAME}
+    password: ${RABBIT_MQ_PASSWORD}
+    virtual-host: ${RABBIT_MQ_VIRTUAL_HOST}
