@@ -15,6 +15,12 @@ public class CategoryRepositoryAdaptor implements CategoryRepository {
     private final CategoryJpaRepository categoryJpaRepository;
 
     @Override
+    public Category save(Category category) {
+        categoryJpaRepository.save(category);
+        return category;
+    }
+
+    @Override
     public List<Category> findAll() {
         return categoryJpaRepository.findAll();
     }
