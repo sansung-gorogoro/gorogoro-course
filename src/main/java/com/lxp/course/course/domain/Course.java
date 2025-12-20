@@ -41,6 +41,7 @@ import static com.lxp.course.course.domain.common.CommonStaticFieldName.COURSE_A
 import static com.lxp.course.course.domain.common.CommonStaticFieldName.COURSE_BODY;
 import static com.lxp.course.course.domain.common.CommonStaticFieldName.DIFFICULTY;
 import static com.lxp.course.course.domain.common.CommonStaticFieldName.INSTRUCTOR_ID;
+import static com.lxp.course.course.domain.common.CommonStaticFieldName.INSTRUCTOR_NAME;
 import static com.lxp.course.course.domain.common.CommonStaticFieldName.PRICE;
 import static com.lxp.course.course.domain.common.CommonValidator.requireNonNull;
 import static com.lxp.course.course.domain.exception.CourseErrorCode.DUPLICATED_SEQ;
@@ -95,6 +96,7 @@ public class Course {
         this.courseBody = requireNonNull(courseBody, COURSE_BODY);
         this.categoryId = requireNonNull(categoryId, CATEGORY);
         this.instructorId = requireNonNull(instructorId, INSTRUCTOR_ID);
+        this.instructorName = requireNonNull(instructorName, INSTRUCTOR_NAME);
         this.price = requireNonNull(price, PRICE);
         this.accessPolicy = requireNonNull(accessPolicy, COURSE_ACCESS_POLICY);
         this.coverImageUrl = coverImageUrl;
