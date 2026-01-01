@@ -1,5 +1,6 @@
 package com.lxp.course.category.presentation.request;
 
+import com.lxp.course.category.application.port.in.command.CreateCategoryCommand;
 import jakarta.validation.constraints.NotBlank;
 
 public record CreateCategoryRequest(
@@ -7,4 +8,7 @@ public record CreateCategoryRequest(
     String name,
     Long parentId
 ) {
+    public CreateCategoryCommand toCommand() {
+        return new CreateCategoryCommand(name, parentId);
+    }
 }

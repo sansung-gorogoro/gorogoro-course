@@ -1,5 +1,6 @@
 package com.lxp.course.category.presentation;
 
+import com.lxp.course.category.application.port.in.CreateCategoryUseCase;
 import com.lxp.course.category.application.port.in.GetCategoriesUseCase;
 import com.lxp.course.category.presentation.request.CreateCategoryRequest;
 import com.lxp.course.category.presentation.response.CategoriesResponse;
@@ -16,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/categories")
 public class CategoryController {
+    private final CreateCategoryUseCase createCategoryUseCase;
     private final GetCategoriesUseCase getCategoriesUseCase;
 
     @PostMapping
     public ResponseEntity<Void> createCategory(@Valid @RequestBody CreateCategoryRequest request) {
-
-
+        createCategoryUseCase.createExecute(request.toCommand());
         return ResponseEntity.ok().build();
     }
 
