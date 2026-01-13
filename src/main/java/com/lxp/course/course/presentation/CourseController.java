@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
@@ -50,8 +52,8 @@ public class CourseController implements CourseApi {
     }
 
     @GetMapping
-    public CourseSummaryResponse getCoursesSummary(@RequestParam Long categoryId) {
-        return CourseSummaryResponse.of(getCourseUseCase.getCoursesSummaryExecute(categoryId));
+    public CourseSummaryResponse getCoursesSummary(@RequestParam Optional<Long> categoryId) {
+        return CourseSummaryResponse.of(getCourseUseCase.getCoursesSummaryExecute(categoryId.orElse(null)));
     }
 
     @GetMapping("/{courseId}")
