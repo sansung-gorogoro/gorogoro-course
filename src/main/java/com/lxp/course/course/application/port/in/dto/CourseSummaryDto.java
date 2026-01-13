@@ -31,8 +31,8 @@ public record CourseSummaryDto(
             course.getPrice().getValue(),
             course.getInstructorName(),
             course.getCoverImageUrl(),
-            new CategoryContent(dto.parentId(), dto.parentName(),
-                new ParentCategoryContent(dto.childId(), dto.childName())
+            new CategoryContent(dto.childId(), dto.childName(),
+                new ParentCategoryContent(dto.parentId(), dto.parentName())
             )
         );
     }
