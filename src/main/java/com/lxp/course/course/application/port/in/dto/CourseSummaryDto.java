@@ -1,5 +1,6 @@
 package com.lxp.course.course.application.port.in.dto;
 
+import com.lxp.course.category.application.port.in.dto.CategoryPathDto;
 import com.lxp.course.course.domain.Course;
 
 public record CourseSummaryDto(
@@ -7,15 +8,32 @@ public record CourseSummaryDto(
     String title,
     Integer price,
     String name,
-    String coverImageUrl
+    String coverImageUrl,
+    CategoryContent category
 ) {
-    public static CourseSummaryDto of(Course course) {
+    public record CategoryContent(
+        Long id,
+        String name,
+        ParentCategoryContent parent
+    ) {
+    }
+
+    public record ParentCategoryContent(
+        Long id,
+        String name
+    ) {
+    }
+
+    public static CourseSummaryDto of(Course course, CategoryPathDto dto) {
         return new CourseSummaryDto(
             course.getId(),
             course.getCourseBody().getTitle(),
             course.getPrice().getValue(),
             course.getInstructorName(),
-            course.getCoverImageUrl()
+            course.getCoverImageUrl(),
+            new CategoryContent(dto.childId(), dto.childName(),
+                new ParentCategoryContent(dto.parentId(), dto.parentName())
+            )
         );
     }
 }

@@ -4,6 +4,7 @@ import com.lxp.course.common.event.DomainEvent;
 import com.lxp.course.common.event.EventEnvelope;
 import com.lxp.course.course.application.port.out.CourseEventPublisher;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessageProperties;
@@ -17,6 +18,7 @@ import static com.lxp.course.common.RabbitMQConstVal.COURSE_DELETED_ROUTING_KEY;
 import static com.lxp.course.common.RabbitMQConstVal.COURSE_EVENT_V1_EXCHANGE;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class CourseEventPublisherAdaptor implements CourseEventPublisher {
     private final RabbitTemplate template;
@@ -45,8 +47,10 @@ public class CourseEventPublisherAdaptor implements CourseEventPublisher {
                 },
                 correlation
             );
+
+            log.debug("Sending event: {}", envelope);
         } catch (AmqpException ex) {
-            //
+            log.debug("Failed event: {}", envelope);
         }
     }
 }

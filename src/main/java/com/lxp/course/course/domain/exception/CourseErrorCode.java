@@ -18,7 +18,8 @@ public enum CourseErrorCode implements ErrorCode {
 
     DUPLICATED_SEQ("중복된 시퀀스가 존재합니다.", HttpStatus.BAD_REQUEST, "COS-0011"),
     COURSE_NOT_FOUND("강좌를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, "COS-0012"),
-    COURSE_OWNERSHIP_EXCEPTION("해당 유저는 강의의 소유자가 아닙니다.", HttpStatus.FORBIDDEN, "COS-0013");
+    COURSE_OWNERSHIP_EXCEPTION("해당 유저는 강의의 소유자가 아닙니다.", HttpStatus.FORBIDDEN, "COS-0013"),
+    CATEGORY_NOT_FOUND("해당 강좌에 들어 있는 카테고리를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, "COS-0014");
     private final String message;
     private final HttpStatus status;
     private final String code;

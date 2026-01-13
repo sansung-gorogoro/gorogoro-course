@@ -3,6 +3,7 @@ package com.lxp.course.course.infra.jpa;
 import com.lxp.course.category.domain.QCategory;
 import com.lxp.course.course.domain.Chapter;
 import com.lxp.course.course.domain.Course;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -82,10 +83,20 @@ public class CustomCourseJpaRepositoryImpl implements CustomCourseJpaRepository 
             .selectFrom(course)
             .join(child).on(course.categoryId.eq(child.id))
             .leftJoin(child.parent, parent)
-            .where(
-                child.id.eq(categoryId)
-                    .or(parent.id.eq(categoryId))
-            )
+            .where(categoryPredicate(categoryId, child, parent))
             .fetch();
+    }
+
+    private BooleanExpression categoryPredicate(
+        Long categoryId,
+        QCategory child,
+        QCategory parent
+    ) {
+        if (categoryId == null) {
+            return null;
+        }
+
+        return child.id.eq(categoryId)
+            .or(parent.id.eq(categoryId));
     }
 }

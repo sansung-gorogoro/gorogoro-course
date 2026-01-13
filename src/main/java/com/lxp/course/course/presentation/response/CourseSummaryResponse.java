@@ -12,8 +12,22 @@ public record CourseSummaryResponse(
         String title,
         Integer price,
         String name,
-        String coverImageUrl
+        String coverImageUrl,
+        CategoryContent category
     ) {}
+
+    record CategoryContent(
+        Long id,
+        String name,
+        ParentCategoryContent parent
+    ) {
+    }
+
+    record ParentCategoryContent(
+        Long id,
+        String name
+    ) {
+    }
 
     public static CourseSummaryResponse of(List<CourseSummaryDto> dtos) {
         List<CourseSummaryContent> items =
@@ -23,7 +37,15 @@ public record CourseSummaryResponse(
                     dto.title(),
                     dto.price(),
                     dto.name(),
-                    dto.coverImageUrl()
+                    dto.coverImageUrl(),
+                    new CategoryContent(
+                        dto.category().id(),
+                        dto.category().name(),
+                        new ParentCategoryContent(
+                            dto.category().parent().id(),
+                            dto.category().parent().name()
+                        )
+                    )
                 )
             ).toList();
 

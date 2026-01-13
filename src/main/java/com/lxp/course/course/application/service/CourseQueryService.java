@@ -1,5 +1,8 @@
 package com.lxp.course.course.application.service;
 
+import com.lxp.course.category.application.port.in.GetCategoriesUseCase;
+import com.lxp.course.category.application.port.in.dto.CategoryDto;
+import com.lxp.course.category.application.port.in.dto.CategoryPathDto;
 import com.lxp.course.category.domain.Category;
 import com.lxp.course.category.domain.exception.CategoryErrorCode;
 import com.lxp.course.category.domain.repository.CategoryRepository;
@@ -26,18 +29,42 @@ import static com.lxp.course.course.domain.exception.CourseErrorCode.COURSE_NOT_
 public class CourseQueryService implements GetCourseUseCase {
     private final CourseRepository courseRepository;
     private final CategoryRepository categoryRepository;
+    private final GetCategoriesUseCase getCategoriesUseCase;
 
     @Override
     public List<CourseSummaryDto> getCoursesSummaryExecute(Long categoryId) {
         List<Course> foundCourses = courseRepository.findAllByCategoryId(categoryId);
+        List<Long> categoryIds = foundCourses.stream().map(Course::getCategoryId).distinct().toList();
 
-        return foundCourses.stream().map(CourseSummaryDto::of).toList();
+        Map<Long, CategoryPathDto> categoryPathDtoMap = getCategoriesUseCase.getCategoriesBySubCategoryIdExecute(categoryIds)
+            .stream().collect(Collectors.toMap(
+                CategoryPathDto::childId,
+                dto ->  dto
+            ));
+
+        return foundCourses.stream().map(course ->
+            CourseSummaryDto.of(course, categoryPathDtoMap.get(course.getCategoryId()))
+        ).toList();
     }
 
     @Override
     public List<CourseSummaryInstructorDto> getCoursesSummaryInstructorExecute(Long instructorId) {
-        return courseRepository.findAllByInstructorId(instructorId)
-            .stream().map(CourseSummaryInstructorDto::of).toList();
+        List<Course> courses = courseRepository.findAllByInstructorId(instructorId);
+
+        List<Long> categoryIds = courses.stream().map(Course::getCategoryId)
+            .distinct()
+            .toList();
+
+        Map<Long, CategoryPathDto> categoryPaths =
+            getCategoriesUseCase.getCategoriesBySubCategoryIdExecute(categoryIds)
+                .stream().collect(Collectors.toMap(
+                    CategoryPathDto::childId,
+                dto -> dto
+                ));
+
+        return courses.stream().map(course ->
+            CourseSummaryInstructorDto.of(course, categoryPaths.get(course.getCategoryId()))
+        ).toList();
     }
 
     @Override
