@@ -24,6 +24,6 @@ public class InternalCourseController {
 
     @GetMapping("/{courseId}")
     public Long getLectureIdFromCourse(Long courseId) {
-        getCourseUseCase.getLectureIdFromCourse(courseId);
+        return getCourseUseCase.getLectureIdFromCourse(courseId);
     }
 }
