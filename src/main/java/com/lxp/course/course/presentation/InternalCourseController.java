@@ -21,4 +21,9 @@ public class InternalCourseController {
         return getCourseUseCase.getCourseDetails(courseIds).stream()
             .map(CourseDetailResponse::of).toList();
     }
+
+    @GetMapping("/{courseId}")
+    public Long getLectureIdFromCourse(Long courseId) {
+        getCourseUseCase.getLectureIdFromCourse(courseId);
+    }
 }

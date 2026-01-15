@@ -93,4 +93,13 @@ public class CourseQueryService implements GetCourseUseCase {
             CourseDetailDto.of(course, idFoundCategoryMap.get(course.getCategoryId()))
         ).toList();
     }
+
+    @Override
+    public Long getLectureIdFromCourse(Long courseId) {
+        return courseRepository.findByIdWith(courseId)
+            .orElseThrow(() -> BusinessException.builder(COURSE_NOT_FOUND)
+                .withField(courseId.toString())
+                .build())
+            .getInstructorId();
+    }
 }
