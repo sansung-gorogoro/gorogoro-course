@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     List<Enrollment> findAllByUserId(Long userId);
+    boolean existsByUserIdAndCourseId(Long userId, Long courseId);
 }
