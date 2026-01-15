@@ -8,11 +8,13 @@ import com.lxp.course.enrollment.service.dto.CreateEnrollmentDto;
 import com.lxp.course.enrollment.service.dto.EnrolledCourseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class EnrollmentService {
     private final EnrollmentRepository enrollmentRepository;
     private final GetCourseUseCase getCourseUseCase;
