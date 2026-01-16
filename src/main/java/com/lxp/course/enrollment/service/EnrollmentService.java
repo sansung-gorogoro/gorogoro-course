@@ -40,4 +40,8 @@ public class EnrollmentService {
             )
         ).toList();
     }
+
+    public Boolean isEnrolled(Long userId, Long courseId) {
+        return enrollmentRepository.existsByUserIdAndCourseId(userId, courseId);
+    }
 }

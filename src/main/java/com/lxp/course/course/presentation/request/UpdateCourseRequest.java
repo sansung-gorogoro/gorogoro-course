@@ -24,7 +24,7 @@ public record UpdateCourseRequest(
     CourseDifficulty courseDifficulty,
     List<UpdateChapterRequest> contents,
     @PositiveOrZero(message = "이용 가능한 날은 0이상 설정해주세요.")
-    Integer availableDays
+    Integer accessDays
 ) {
     record UpdateChapterRequest(
         @NotNull(message = "변경하려는 챕터의 id가 꼭 포함되어야 합니다.")
@@ -61,7 +61,7 @@ public record UpdateCourseRequest(
 
         return new UpdateCourseCommand(
             courseId, instructorId, title, summary, description,
-            categoryId, price, availableDays,
+            categoryId, price, accessDays,
             coverImageUrl, courseDifficulty, chapterCommands
         );
     }

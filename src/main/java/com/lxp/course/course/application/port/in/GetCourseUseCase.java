@@ -14,4 +14,6 @@ public interface GetCourseUseCase {
     CourseDetailDto getCourseDetail(Long courseId);
 
     List<CourseDetailDto> getCourseDetails(List<Long> courseIds);
+
+    Long getLectureIdFromCourse(Long courseId);
 }
