@@ -4,6 +4,7 @@ import com.lxp.course.course.application.port.in.GetCourseUseCase;
 import com.lxp.course.course.presentation.response.CourseDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +24,7 @@ public class InternalCourseController {
     }
 
     @GetMapping("/{courseId}")
-    public Long getLectureIdFromCourse(Long courseId) {
+    public Long getLectureIdFromCourse(@PathVariable Long courseId) {
         return getCourseUseCase.getLectureIdFromCourse(courseId);
     }
 }
