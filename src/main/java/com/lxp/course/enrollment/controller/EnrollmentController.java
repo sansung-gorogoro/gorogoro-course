@@ -23,7 +23,7 @@ public class EnrollmentController {
         @RequestHeader("X-User-Id") Long userId,
         @RequestBody CreateEnrollmentRequest request
     ) {
-        enrollmentService.createEnrollment(new CreateEnrollmentDto(userId, request.courseId()));
+        enrollmentService.createEnrollment(new CreateEnrollmentDto(request.courseId(), userId));
     }
 
     @GetMapping
